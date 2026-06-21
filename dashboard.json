@@ -1,0 +1,920 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "content": "<p style=\"color:#90caf9; margin:6px 0 0 0; font-size:0.95em;\">Condiciones meteorológicas en tiempo real para practicar deporte al aire libre · OpenWeather API</p>",
+        "mode": "html"
+      },
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${ds_infinity}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#5794F2",
+            "mode": "fixed"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 3
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^ciudad$/",
+          "values": false
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "ciudad",
+              "text": "ciudad",
+              "type": "string"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${ds_infinity}"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "jq-backend",
+          "range": false,
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "${base_url}/api/galicia/deporte?municipio=${municipio:percentencode}",
+          "url_options": {
+            "data": "",
+            "method": "GET",
+            "params": []
+          }
+        }
+      ],
+      "title": "📍 Concello",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${ds_infinity}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "❌  No Apto"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "✅  ¡Apto!"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 3
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^apto$/",
+          "values": false
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "apto",
+              "text": "apto",
+              "type": "number"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${ds_infinity}"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "jq-backend",
+          "range": false,
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "${base_url}/api/galicia/deporte?municipio=${municipio:percentencode}",
+          "url_options": {
+            "data": "",
+            "method": "GET",
+            "params": []
+          }
+        }
+      ],
+      "title": "🏃 ¿Apto para deporte?",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${ds_infinity}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#73BF69",
+            "mode": "fixed"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 3
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^recomendacion$/",
+          "values": false
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "recomendacion",
+              "text": "recomendacion",
+              "type": "string"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${ds_infinity}"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "jq-backend",
+          "range": false,
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "${base_url}/api/galicia/deporte?municipio=${municipio:percentencode}",
+          "url_options": {
+            "data": "",
+            "method": "GET",
+            "params": []
+          }
+        }
+      ],
+      "title": "📋 Recomendación",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${ds_infinity}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 40,
+          "min": -10,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#73BF69",
+                "value": 0
+              },
+              {
+                "color": "#FADE2A",
+                "value": 25
+              },
+              {
+                "color": "#FF5733",
+                "value": 35
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "temperatura",
+              "text": "Temperatura",
+              "type": "number"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${ds_infinity}"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "jq-backend",
+          "range": false,
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "${base_url}/api/galicia/deporte?municipio=${municipio:percentencode}",
+          "url_options": {
+            "data": "",
+            "method": "GET",
+            "params": []
+          }
+        }
+      ],
+      "title": "🌡️ Temperatura",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${ds_infinity}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 20
+              },
+              {
+                "color": "orange",
+                "value": 40
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "velocitykmh"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "viento",
+              "text": "Viento",
+              "type": "number"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${ds_infinity}"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "jq-backend",
+          "range": false,
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "${base_url}/api/galicia/deporte?municipio=${municipio:percentencode}",
+          "url_options": {
+            "data": "",
+            "method": "GET",
+            "params": []
+          }
+        }
+      ],
+      "title": "💨 Viento",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${ds_infinity}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 30,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "light-blue",
+                "value": 1
+              },
+              {
+                "color": "blue",
+                "value": 5
+              },
+              {
+                "color": "dark-blue",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "lengthmm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 7,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "precipitacion",
+              "text": "Precipitación",
+              "type": "number"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${ds_infinity}"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "jq-backend",
+          "range": false,
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "${base_url}/api/galicia/deporte?municipio=${municipio:percentencode}",
+          "url_options": {
+            "data": "",
+            "method": "GET",
+            "params": []
+          }
+        }
+      ],
+      "title": "🌧️ Precipitación",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "${ds_infinity}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "No apto"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "Apto"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 8,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": true,
+              "style": {
+                "color": {
+                  "field": "apto",
+                  "fixed": "dark-green"
+                },
+                "opacity": 0.85,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 11,
+                  "max": 15,
+                  "min": 5
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "text": {
+                  "field": "ciudad",
+                  "fixed": ""
+                },
+                "textConfig": {
+                  "fontSize": 11,
+                  "offsetX": 0,
+                  "offsetY": -14,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "A"
+            },
+            "location": {
+              "latitude": "latitud",
+              "longitude": "longitud",
+              "mode": "coords"
+            },
+            "name": "Concellos de Galicia",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "coords",
+          "lat": 42.75,
+          "lon": -7.95,
+          "zoom": 7.3
+        }
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "ciudad",
+              "text": "ciudad",
+              "type": "string"
+            },
+            {
+              "selector": "latitud",
+              "text": "latitud",
+              "type": "number"
+            },
+            {
+              "selector": "longitud",
+              "text": "longitud",
+              "type": "number"
+            },
+            {
+              "selector": "temperatura",
+              "text": "temperatura",
+              "type": "number"
+            },
+            {
+              "selector": "viento",
+              "text": "viento",
+              "type": "number"
+            },
+            {
+              "selector": "precipitacion",
+              "text": "precipitacion",
+              "type": "number"
+            },
+            {
+              "selector": "apto",
+              "text": "apto",
+              "type": "number"
+            },
+            {
+              "selector": "recomendacion",
+              "text": "recomendacion",
+              "type": "string"
+            }
+          ],
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "${ds_infinity}"
+          },
+          "filters": [],
+          "format": "table",
+          "global_query_id": "",
+          "parser": "jq-backend",
+          "range": false,
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "${base_url}/api/galicia/deporte",
+          "url_options": {
+            "data": "",
+            "method": "GET",
+            "params": []
+          }
+        }
+      ],
+      "title": "🗺️ Mapa de Galicia · verde = apto / rojo = no apto",
+      "type": "geomap"
+    }
+  ],
+  "preload": false,
+  "refresh": "5m",
+  "schemaVersion": 42,
+  "tags": [
+    "galicia",
+    "openweather",
+    "deporte"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource Infinity",
+        "name": "ds_infinity",
+        "options": [],
+        "query": "yesoreyeram-infinity-datasource",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "text": "http://localhost:5000",
+          "value": "http://localhost:5000"
+        },
+        "hide": 0,
+        "label": "URL del backend",
+        "name": "base_url",
+        "options": [
+          {
+            "selected": true,
+            "text": "http://localhost:5000",
+            "value": "http://localhost:5000"
+          }
+        ],
+        "query": "http://localhost:5000",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "Santiago de Compostela",
+          "value": "Santiago de Compostela"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Concello",
+        "name": "municipio",
+        "options": [
+          {
+            "selected": false,
+            "text": "A Coruña",
+            "value": "A Coruña"
+          },
+          {
+            "selected": true,
+            "text": "Santiago de Compostela",
+            "value": "Santiago de Compostela"
+          },
+          {
+            "selected": false,
+            "text": "Ferrol",
+            "value": "Ferrol"
+          },
+          {
+            "selected": false,
+            "text": "Narón",
+            "value": "Narón"
+          },
+          {
+            "selected": false,
+            "text": "Carballo",
+            "value": "Carballo"
+          },
+          {
+            "selected": false,
+            "text": "Ribeira",
+            "value": "Ribeira"
+          },
+          {
+            "selected": false,
+            "text": "A Estrada",
+            "value": "A Estrada"
+          },
+          {
+            "selected": false,
+            "text": "Lugo",
+            "value": "Lugo"
+          },
+          {
+            "selected": false,
+            "text": "Monforte de Lemos",
+            "value": "Monforte de Lemos"
+          },
+          {
+            "selected": false,
+            "text": "Viveiro",
+            "value": "Viveiro"
+          },
+          {
+            "selected": false,
+            "text": "Sarria",
+            "value": "Sarria"
+          },
+          {
+            "selected": false,
+            "text": "Burela",
+            "value": "Burela"
+          },
+          {
+            "selected": false,
+            "text": "Ourense",
+            "value": "Ourense"
+          },
+          {
+            "selected": false,
+            "text": "Verín",
+            "value": "Verín"
+          },
+          {
+            "selected": false,
+            "text": "O Barco de Valdeorras",
+            "value": "O Barco de Valdeorras"
+          },
+          {
+            "selected": false,
+            "text": "Vigo",
+            "value": "Vigo"
+          },
+          {
+            "selected": false,
+            "text": "Pontevedra",
+            "value": "Pontevedra"
+          },
+          {
+            "selected": false,
+            "text": "Vilagarcía de Arousa",
+            "value": "Vilagarcía de Arousa"
+          },
+          {
+            "selected": false,
+            "text": "Sanxenxo",
+            "value": "Sanxenxo"
+          },
+          {
+            "selected": false,
+            "text": "Lalín",
+            "value": "Lalín"
+          }
+        ],
+        "query": "A Coruña,Santiago de Compostela,Ferrol,Narón,Carballo,Ribeira,A Estrada,Lugo,Monforte de Lemos,Viveiro,Sarria,Burela,Ourense,Verín,O Barco de Valdeorras,Vigo,Pontevedra,Vilagarcía de Arousa,Sanxenxo,Lalín",
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Santi & Go · Tiempo & Deporte en Galicia",
+  "uid": "santi-go-galicia",
+  "version": 1,
+  "weekStart": ""
+}

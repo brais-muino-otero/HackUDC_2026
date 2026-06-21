@@ -1,0 +1,91 @@
+# provisioning/alerting/alert-rule-no-apto.yaml
+# -------------------------------------------------------------------
+# Regla de alerta multidimensional: dispara UNA instancia por cada
+# concello que NO sea apto para deporte (apto = 0) y la envía a Telegram.
+#
+# SOLO Grafana self-hosted / OSS. En Grafana Cloud, créala por la UI
+# (ver README, sección 6) — los pasos son equivalentes a este fichero.
+#
+# Cómo funciona el truco multidimensional:
+#   - La query A (Infinity, formato tabla) devuelve UNA sola columna
+#     numérica ('apto'); 'ciudad' y 'recomendacion' son texto y Grafana
+#     las convierte en ETIQUETAS. Cada fila => una instancia de alerta.
+#   - El umbral C ('apto' < 1) deja en estado Alerting solo las filas con
+#     apto = 0, es decir, los concellos no aptos.
+#
+# ANTES DE USAR: sustituye <UID_INFINITY> por el UID de tu datasource
+# Infinity (en Cloud suele ser 'grafanacloud-infinity'; en local lo ves
+# en la URL de Connections > Data sources > [tu Infinity]).
+# Si usas ngrok, cambia también la 'url' por tu URL pública.
+# -------------------------------------------------------------------
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: Santi & Go
+    folder: Santi & Go
+    interval: 5m
+    rules:
+      - uid: santigo-concello-no-apto
+        title: Concello no apto para deporte
+        condition: C
+        for: 0m
+        noDataState: OK
+        execErrState: Alerting
+        data:
+          # --- Query A: datos de todos los concellos vía Infinity ---
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: <UID_INFINITY>
+            model:
+              refId: A
+              datasource:
+                type: yesoreyeram-infinity-datasource
+                uid: <UID_INFINITY>
+              type: json
+              source: url
+              parser: backend
+              format: table
+              url: http://localhost:5000/api/galicia/deporte
+              url_options:
+                method: GET
+                data: ""
+              root_selector: ""
+              columns:
+                - selector: ciudad
+                  text: ciudad
+                  type: string          # -> etiqueta
+                - selector: recomendacion
+                  text: recomendacion
+                  type: string          # -> etiqueta
+                - selector: apto
+                  text: apto
+                  type: number          # -> ÚNICA columna numérica (valor)
+          # --- Expresión C: umbral apto < 1 (apto = 0 => Alerting) ---
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              conditions:
+                - evaluator:
+                    type: lt
+                    params:
+                      - 1
+        labels:
+          severity: warning
+          app: santi-go
+        annotations:
+          summary: "⚠️ No apto para deporte en {{ $labels.ciudad }} — {{ $labels.recomendacion }}"
+        # Routing simplificado: enviar directamente al contact point de Telegram.
+        notification_settings:
+          receiver: telegram-santi-go

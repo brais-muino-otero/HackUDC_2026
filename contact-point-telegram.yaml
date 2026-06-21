@@ -1,0 +1,32 @@
+# provisioning/alerting/contact-point-telegram.yaml
+# -------------------------------------------------------------------
+# Contact point de Telegram para Grafana (provisioning por fichero).
+# SOLO aplica a Grafana self-hosted / OSS (Docker o instalación local):
+# colócalo en /etc/grafana/provisioning/alerting/ y reinicia Grafana.
+#
+# En Grafana Cloud NO se pueden cargar ficheros de provisioning:
+# crea el contact point por la UI (ver README, sección 6).
+#
+# El BOT token NO se escribe aquí en claro: se inyecta por variable de
+# entorno GF_... o con la sintaxis $__env. Aquí usamos una variable.
+# -------------------------------------------------------------------
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: telegram-santi-go
+    receivers:
+      - uid: telegram-santi-go
+        type: telegram
+        settings:
+          # Token del bot de @BotFather. Define TELEGRAM_BOT_TOKEN en el entorno.
+          bottoken: ${TELEGRAM_BOT_TOKEN}
+          # ID del chat/grupo donde enviar las alertas (puede ser negativo).
+          chatid: "${TELEGRAM_CHAT_ID}"
+          # Mensaje personalizado (Go templating). Recorre todas las alertas.
+          message: |
+            {{ range .Alerts }}{{ if eq .Status "firing" }}🔴 ALERTA{{ else }}🟢 RESUELTO{{ end }} · Santi & Go
+            {{ .Annotations.summary }}
+            🕒 {{ .StartsAt.Format "15:04 02/01" }}
+            {{ end }}
+        disableResolveMessage: false
