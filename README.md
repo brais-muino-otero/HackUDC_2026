@@ -54,7 +54,7 @@ El backend consulta a la API de OpenWeatherMap, procesa los datos y aplica la l√
   "actualizado": "2026-06-17T02:00:00"
 }
 
----
+```
 
 ## 2. Despliegue del backend (paso a paso)
 
