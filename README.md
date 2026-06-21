@@ -9,7 +9,7 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 - **Visualización:** Grafana + plugin **Infinity** (gauges, stats y un **Geomap**)
 - **Alertas:** Grafana Alerting → **Telegram** (alerta por concello no apto)
 
-URL dashborad Grafana: http://localhost:3000/d/br9bzzl/santi-and-go-c2b7-tiempo-and-deporte-en-galicia?orgId=1&from=now-1h&to=now&timezone=browser&var-ds_infinity=afpaocfjvw8w0c&var-base_url=http:%2F%2Flocalhost:5000&var-municipio=A%20Coru%C3%B1a&refresh=auto
+URL plataforma Santi & Go: http://localhost:3000/d/br9bzzl/santi-and-go-c2b7-tiempo-and-deporte-en-galicia?orgId=1&from=now-1h&to=now&timezone=browser&var-ds_infinity=afpaocfjvw8w0c&var-base_url=http:%2F%2Flocalhost:5000&var-municipio=A%20Coru%C3%B1a&refresh=auto
 ---
 
 ## 1. Arquitectura
