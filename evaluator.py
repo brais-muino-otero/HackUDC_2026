@@ -32,12 +32,12 @@ def evaluar_deporte(temp, lluvia, viento):
         return {"apto": 0, "recomendacion": "Sin datos suficientes"}
 
     if lluvia > config.UMBRAL_LLUVIA_MM:
-        return {"apto": 0, "recomendacion": "No recomendado · Lluvia"}
+        return {"apto": 0, "recomendacion": "No recomendado · Lluvia extrema"}
     if temp < config.UMBRAL_TEMP_MIN:
         return {"apto": 0, "recomendacion": "No recomendado · Frío extremo"}
     if temp > config.UMBRAL_TEMP_MAX:
         return {"apto": 0, "recomendacion": "No recomendado · Calor extremo"}
     if viento > config.UMBRAL_VIENTO_KMH:
-        return {"apto": 0, "recomendacion": "No recomendado · Mucho viento"}
+        return {"apto": 0, "recomendacion": "No recomendado · Viento extremo"}
 
     return {"apto": 1, "recomendacion": "¡Ideal para deporte!"}
