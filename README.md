@@ -10,6 +10,7 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 - **Alertas:** Grafana Alerting → **Telegram** (alerta por concello no apto)
 
 URL plataforma Santi & Go: http://localhost:3000/d/br9bzzl/santi-and-go-c2b7-tiempo-and-deporte-en-galicia
+
 ---
 
 ## 1. Arquitectura
@@ -55,6 +56,8 @@ El backend consulta a la API de OpenWeatherMap, procesa los datos y aplica la l�
 }
 
 ```
+
+---
 
 ## 2. Despliegue del backend (paso a paso)
 
@@ -145,10 +148,13 @@ sola regla que genera **una instancia por cada concello no apto**, con su nombre
 - **Integration:** `Telegram`
 - **BOT API Token:** tu token
 - **Chat ID:** el ID del grupo (con el `-` si es negativo)
-- *(Opcional)* **Message** — mensaje bonito en Telegram:
+- *(Opcional)* **Message** — mensaje bonito en Telegram, con una línea por alerta
+  (usa las etiquetas directamente para que ciudad y motivo salgan siempre):
   ```
-  {{ range .Alerts }}{{ if eq .Status "firing" }}🔴 ALERTA{{ else }}🟢 RESUELTO{{ end }} · Santi & Go
-  {{ .Annotations.summary }}
+  {{ range .Alerts.Firing }}🔴 ALERTA · Santi & Go
+  Estado del deporte en {{ .Labels.ciudad }}: {{ .Labels.recomendacion }}
+  {{ end }}{{ range .Alerts.Resolved }}🟢 RESUELTO · Santi & Go
+  Estado del deporte en {{ .Labels.ciudad }}: ¡Ideal para deporte!
   {{ end }}
   ```
 - Pulsa **Test** (debe llegarte un mensaje de prueba al grupo) y **Save contact point**.
@@ -183,11 +189,17 @@ sola regla que genera **una instancia por cada concello no apto**, con su nombre
    `1m` y **Pending period** `0s` (aviso inmediato). *(Validado en pruebas reales: con
    intervalos más agresivos, como `10s`, el motor de alerting puede generar notificaciones
    incompletas al procesar muchas alertas a la vez; `1m` es estable.)*
-6. **Configure labels and notifications:**
+6. **Agrupación por concello** (para recibir **un mensaje por concello**, no todos juntos):
+   en la propia regla, dentro de *Silencio, agrupación y temporización*, activa
+   **Anular agrupación** y añade las etiquetas `grafana_folder`, `alertname`, `ciudad`.
+   Activa también **Anular tiempos** con: *Group wait* `0s`, *Group interval* `1m`,
+   *Repeat interval* `1h`. *(Alternativa equivalente: añadir `ciudad` al "Group by" de la
+   Notification policy por defecto en Alerting → Notification policies.)*
+7. **Configure labels and notifications:**
    - **Summary** (annotation):
      `⚠️ No apto para deporte en {{ $labels.ciudad }} — {{ $labels.recomendacion }}`
    - En **Notifications**, **Select contact point → `telegram-santi-go`**.
-7. **Save rule and exit.** Para probar en seco, baja temporalmente algún umbral en
+8. **Save rule and exit.** Para probar en seco, baja temporalmente algún umbral en
    `config.py` (p. ej. `UMBRAL_VIENTO_KMH = 1`) para forzar un "no apto" y ver llegar el mensaje.
 
 ### 5.4 (Bonus) Provisioning para Grafana local/OSS
@@ -233,7 +245,8 @@ incluye `flask-cors` activado como red de seguridad por si usas Infinity en modo
 ### Token de OpenWeather API
 - Se pide registrándote en OpenWeather API.
 - Va **solo** en `.env` (`OPENWEATHER_API_KEY`). Nunca en el código ni en git.
-- Si ves `features` vacío o error 4xx, suele ser token inválido o coordenadas fuera de malla.
+- Si ves error 401, suele ser token inválido o una clave recién creada aún sin activar
+  (las claves nuevas de OpenWeather tardan desde minutos hasta ~2 h en activarse).
 
 ### Coordenadas
 OpenWeather API espera `lat`/`lon` como parámetros separados. El cliente ya lo gestiona.
