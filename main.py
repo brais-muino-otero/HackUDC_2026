@@ -24,6 +24,7 @@ con los campos que consume el plugin Infinity de Grafana:
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+import os
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -93,5 +94,8 @@ def health():
 
 
 if __name__ == "__main__":
-    # host 0.0.0.0 -> accesible desde ngrok/red local. Puerto estándar de Flask.
-    app.run(host="0.0.0.0", port=5000)
+    # host 0.0.0.0 -> accesible desde ngrok/red local.
+    # Render asigna el puerto mediante la variable de entorno PORT;
+    # en local (sin esa variable) cae al 5000 de siempre.
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
