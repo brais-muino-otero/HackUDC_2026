@@ -6,7 +6,7 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 
 - **Backend:** Python + Flask (modular), desplegado en **Render**
 - **Datos:** OpenWeatherMap API (tiempo real)
-- **Visualización:** Grafana Cloud + plugin **Infinity** (gauges, stats, tabla y un **Geomap**)
+- **Visualización:** Grafana Cloud + plugin **Infinity** (gauges, stats, tabla, medias y un **Geomap**)
 - **Alertas:** Grafana Alerting → **Telegram** (alerta por concello no apto)
 
 **🌐 Dashboard en vivo (Grafana Cloud):**
@@ -24,27 +24,42 @@ https://proudballoon610.grafana.net/d/santi-go-galicia
 
 ```
 santi-go/
-├── main.py              # Punto de entrada Flask (endpoints)
-├── config.py            # Token, umbrales y catálogo de concellos (lat/lon)
-├── weather_client.py    # Cliente OpenWeather + cache
-├── evaluator.py         # Lógica "apto / no apto" (pura, testeable)
-├── dashboard.json       # Dashboard base generado por generate_dashboard.py
-├── generate_dashboard.py # Genera dashboard.json a partir del catálogo de concellos
+├── main.py                        # Punto de entrada Flask (endpoints)
+├── config.py                      # Token, umbrales y catálogo de concellos (lat/lon)
+├── weather_client.py              # Cliente OpenWeather + cache
+├── evaluator.py                   # Lógica "apto / no apto" (pura, testeable)
+├── generate_dashboard.py          # Genera dashboard.json a partir del catálogo de concellos
+├── dashboard.json                 # Dashboard BASE (8 paneles) generado por el script
+├── dashboard_export_completo.json # Dashboard COMPLETO (13 paneles) exportado de Grafana
 ├── provisioning/
 │   └── alerting/
 │       ├── contact-point-telegram.yaml
 │       └── alert-rule-no-apto.yaml
 ├── requirements.txt
-├── .env.example         # Plantilla del token (copiar a .env)
+├── .env.example                   # Plantilla del token (copiar a .env)
 ├── .gitignore
-└── test_local.py        # Pruebas sin gastar llamadas a la API
+└── test_local.py                  # Pruebas sin gastar llamadas a la API
 ```
+
+### 📊 Los dos archivos de dashboard
+
+El repo incluye **dos** definiciones de dashboard, y conviene saber cuál usar:
+
+| Archivo | Paneles | Cómo se mantiene | Cuándo usarlo |
+|---|---|---|---|
+| `dashboard.json` | **8** (base): cabecera, Concello, ¿Apto?, Recomendación, 3 gauges y Geomap | Se **genera** con `generate_dashboard.py` a partir del catálogo de `config.py` | Punto de partida / regenerar tras cambiar concellos |
+| `dashboard_export_completo.json` | **13** (completo): los 8 anteriores **+ tabla por concello + 3 medias de Galicia + piechart de aptos** | Exportado directamente **desde Grafana** (los paneles extra se añadieron por UI) | **Importar la versión completa** tal cual en Grafana Cloud / OSS |
+
+> **Para ver el dashboard tal como está en producción, importa `dashboard_export_completo.json`.**
+> El `dashboard.json` es la base reproducible desde código; los paneles de tabla y medias
+> todavía no están portados a `generate_dashboard.py` (mejora pendiente), por eso existe el
+> export completo como fuente de la versión final.
 
 **Decisión clave de diseño:** un único endpoint que centraliza la lógica de negocio.
 
 | Petición | Devuelve | Lo consume |
 |---|---|---|
-| `GET /api/galicia/deporte` | **Todos** los concellos (array) | El **Geomap**, la **tabla**, las **medias** y la **alerta** |
+| `GET /api/galicia/deporte` | **Todos** los concellos (array) | El **Geomap**, la **tabla**, las **medias**, el **piechart** y la **alerta** |
 | `GET /api/galicia/deporte?municipio=Vigo` | **Un** concello específico | Los **gauges/stats** filtrados |
 
 El backend consulta a la API de OpenWeatherMap, procesa los datos y aplica la lógica de "apto/no apto" según los umbrales configurados. Cada registro del JSON devuelto es:
@@ -117,6 +132,8 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
 
 > Plan gratuito: el servicio se suspende tras un periodo de inactividad y la primera
 > petición lo "despierta" (~30–50 s). Es normal, no es un fallo.
+> El backend responde en sus rutas (`/api/galicia/deporte`, `/health`); la raíz `/` no
+> tiene página y devuelve *Not Found* — es lo esperado en una API.
 
 ---
 
@@ -129,7 +146,9 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
 2. **Crea el datasource Infinity:**
    *Connections → Data sources → Add → Infinity.* Déjalo por defecto y **Save & test**.
 3. **Importa el dashboard:**
-   *Dashboards → New → Import → Upload JSON file →* selecciona `dashboard.json`.
+   *Dashboards → New → Import → Upload JSON file →* selecciona
+   **`dashboard_export_completo.json`** (versión completa con tabla, medias y piechart).
+   *(Si solo quieres la versión base reproducible desde código, usa `dashboard.json`.)*
 4. En la pantalla de import te pedirá el datasource: **elige tu Infinity**.
    Si vas a reemplazar un dashboard existente, deja el **UID** en `santi-go-galicia` para
    que lo sobrescriba en vez de crear un duplicado.
@@ -140,7 +159,9 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
 > **Importante — usa siempre `$base_url` en las queries de los paneles.** Todos los paneles
 > deben construir su URL como `${base_url}/api/galicia/deporte`, nunca con `localhost` escrito
 > a mano. Si un panel tiene la URL fija a `http://localhost:5000`, funcionará en tu PC pero
-> saldrá **vacío** en Grafana Cloud (allí `localhost` no es tu backend).
+> saldrá **vacío** en Grafana Cloud (allí `localhost` no es tu backend). El
+> `dashboard_export_completo.json` de este repo ya está corregido para usar `${base_url}` en
+> todos los paneles.
 
 ---
 
@@ -282,6 +303,11 @@ petición HTTP, no tu navegador. Por tanto el backend tiene que ser accesible de
   *(Durante el desarrollo también puede usarse un túnel como ngrok apuntando a tu localhost,
   pero Render es la opción estable y permanente, y no depende de tener el PC encendido.)*
 
+> Aprendido a base de depuración: los paneles añadidos por UI (tabla, medias, piechart)
+> tenían la URL escrita como `http://localhost:5000/...` en vez de `${base_url}/...`. En
+> local funcionaban, pero al llevarlos a Grafana Cloud salían vacíos. La versión de
+> `dashboard_export_completo.json` de este repo ya está corregida.
+
 ### CORS
 Con el parser backend no hay problema de CORS (servidor→servidor). Aun así, el backend
 incluye `flask-cors` activado como red de seguridad por si usas Infinity en modo *frontend*.
@@ -309,3 +335,9 @@ campo, el único sitio a tocar es `weather_client.py`.
 ### Añadir concellos
 Edita `CONCELLOS` en `config.py` y ejecuta `python generate_dashboard.py` para
 regenerar el `dashboard.json` con la nueva lista en la variable `$municipio`.
+
+> Nota: `generate_dashboard.py` regenera únicamente los **8 paneles base**. Los paneles
+> extra (tabla, medias, piechart) se añadieron por la UI de Grafana y viven en
+> `dashboard_export_completo.json`. Si añades concellos y quieres la versión completa
+> actualizada, tras regenerar habría que volver a incorporar esos paneles (mejora pendiente:
+> portarlos al script para tener una única fuente de verdad).
