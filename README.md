@@ -10,7 +10,7 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 - **Alertas:** Grafana Alerting → **Telegram** (alerta por concello no apto)
 - **Keep-alive:** UptimeRobot (evita que el plan gratuito de Render hiberne el backend)
 
-Enlaces del proyecto (ábrelos en el navegador):
+Enlaces del proyecto:
 
 **🌐 Dashboard en vivo (Grafana Cloud):**
 https://proudballoon610.grafana.net/d/santi-go-galicia
