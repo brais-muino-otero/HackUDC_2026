@@ -18,7 +18,7 @@ https://proudballoon610.grafana.net/dashboard/snapshot/SIqkgs6yfZ45g1eU8uCkRPb0y
 en que se capturó, no se actualizan)*
 
 **🌐 Dashboard en vivo (Grafana Cloud, con login):**
-https://proudballoon610.grafana.net/d/santi-go-galicia
+https://proudballoon610.grafana.net/d/santi-go-galicia                                                                               
 *(datos en tiempo real; puede requerir sesión de Grafana según la configuración de acceso)*
 
 **Backend (Render):** https://santi-go.onrender.com
