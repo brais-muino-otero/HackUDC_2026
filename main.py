@@ -67,6 +67,23 @@ def _construir_registro(concello: dict) -> dict:
     }
 
 
+@app.route("/", methods=["GET"])
+def index():
+    """Página de bienvenida de la API: describe el servicio y sus endpoints."""
+    return jsonify({
+        "servicio": "Santi & Go — Tiempo & Deporte en Galicia",
+        "descripcion": "API de condiciones meteorológicas en tiempo real "
+                       "para practicar deporte al aire libre en Galicia",
+        "endpoints": {
+            "todos_los_concellos": "/api/galicia/deporte",
+            "un_concello": "/api/galicia/deporte?municipio=Vigo",
+            "health": "/health",
+        },
+        "dashboard": "https://proudballoon610.grafana.net/d/santi-go-galicia",
+        "concellos": len(config.CONCELLOS),
+    })
+
+
 @app.route("/api/galicia/deporte", methods=["GET"])
 def obtener_datos():
     municipio = request.args.get("municipio")
