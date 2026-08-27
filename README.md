@@ -8,11 +8,14 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 - **Datos:** OpenWeatherMap API (tiempo real)
 - **Visualización:** Grafana Cloud + plugin **Infinity** (gauges, stats, tabla, medias y un **Geomap**)
 - **Alertas:** Grafana Alerting → **Telegram** (alerta por concello no apto)
+- **Keep-alive:** UptimeRobot (evita que el plan gratuito de Render hiberne el backend)
 
 **🌐 Dashboard en vivo (Grafana Cloud):**
 https://proudballoon610.grafana.net/d/santi-go-galicia
 
 **Backend (Render):** https://santi-go.onrender.com
+
+**📈 Estado del backend en vivo (UptimeRobot):** https://stats.uptimerobot.com/rhc92PF4VK
 
 > Nota: el dashboard está alojado en el plan gratuito de Grafana Cloud y el backend en el
 > plan gratuito de Render. Render "duerme" el servicio tras un rato de inactividad, así que
@@ -134,6 +137,14 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
 > petición lo "despierta" (~30–50 s). Es normal, no es un fallo.
 > La raíz `/` devuelve un JSON de bienvenida con la descripción del servicio y la lista
 > de endpoints disponibles; los datos están en `/api/galicia/deporte` y el estado en `/health`.
+
+> 💡 **Evitar la hibernación (keep-alive):** para que el backend no se suspenda y responda
+> siempre rápido, un monitor de [UptimeRobot](https://uptimerobot.com) hace una petición HTTP
+> periódica (cada ~5 min) a `https://santi-go.onrender.com`. Así Render nunca llega al periodo
+> de inactividad que dispara la suspensión, y el dashboard carga al instante desde el móvil.
+> El estado del backend es público: **https://stats.uptimerobot.com/rhc92PF4VK**
+> *(Nota: mantener despierto un servicio del plan gratuito consume más horas de cómputo; para
+> un uso personal suele quedar dentro del margen mensual.)*
 
 ---
 
