@@ -4,12 +4,19 @@ Plataforma regional que conecta la API de **OpenWeatherMap** con **Grafana**
 para responder de un vistazo: *¿es buen momento para hacer deporte al aire libre
 en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 
-- **Backend:** Python + Flask (modular)
+- **Backend:** Python + Flask (modular), desplegado en **Render**
 - **Datos:** OpenWeatherMap API (tiempo real)
-- **Visualización:** Grafana + plugin **Infinity** (gauges, stats y un **Geomap**)
+- **Visualización:** Grafana Cloud + plugin **Infinity** (gauges, stats, tabla y un **Geomap**)
 - **Alertas:** Grafana Alerting → **Telegram** (alerta por concello no apto)
 
-URL plataforma Santi & Go: http://localhost:3000/d/br9bzzl/santi-and-go-c2b7-tiempo-and-deporte-en-galicia
+**🌐 Dashboard en vivo (Grafana Cloud):**
+https://proudballoon610.grafana.net/d/santi-go-galicia
+
+**Backend (Render):** https://santi-go.onrender.com
+
+> Nota: el dashboard está alojado en el plan gratuito de Grafana Cloud y el backend en el
+> plan gratuito de Render. Render "duerme" el servicio tras un rato de inactividad, así que
+> la primera carga tras un tiempo parado puede tardar ~30–50 s en responder (luego va fluido).
 
 ---
 
@@ -21,7 +28,8 @@ santi-go/
 ├── config.py            # Token, umbrales y catálogo de concellos (lat/lon)
 ├── weather_client.py    # Cliente OpenWeather + cache
 ├── evaluator.py         # Lógica "apto / no apto" (pura, testeable)
-├── dashboard.json       # Dashboard listo para importar en Grafana
+├── dashboard.json       # Dashboard base generado por generate_dashboard.py
+├── generate_dashboard.py # Genera dashboard.json a partir del catálogo de concellos
 ├── provisioning/
 │   └── alerting/
 │       ├── contact-point-telegram.yaml
@@ -36,7 +44,7 @@ santi-go/
 
 | Petición | Devuelve | Lo consume |
 |---|---|---|
-| `GET /api/galicia/deporte` | **Todos** los concellos (array) | El **Geomap** y la **alerta** |
+| `GET /api/galicia/deporte` | **Todos** los concellos (array) | El **Geomap**, la **tabla**, las **medias** y la **alerta** |
 | `GET /api/galicia/deporte?municipio=Vigo` | **Un** concello específico | Los **gauges/stats** filtrados |
 
 El backend consulta a la API de OpenWeatherMap, procesa los datos y aplica la lógica de "apto/no apto" según los umbrales configurados. Cada registro del JSON devuelto es:
@@ -59,9 +67,11 @@ El backend consulta a la API de OpenWeatherMap, procesa los datos y aplica la l�
 
 ---
 
-## 2. Despliegue del backend (paso a paso)
+## 2. Despliegue del backend
 
-> Comandos para **Windows / PowerShell** (tu entorno). Entre paréntesis, el equivalente Linux/Mac.
+### 2.1 En local (desarrollo)
+
+> Comandos para **Windows / PowerShell**. Entre paréntesis, el equivalente Linux/Mac.
 
 ```powershell
 # 1) Entrar en la carpeta del proyecto
@@ -92,9 +102,27 @@ curl "http://localhost:5000/api/galicia/deporte?municipio=Vigo"
 curl http://localhost:5000/api/galicia/deporte
 ```
 
+### 2.2 En producción (Render)
+
+El backend está desplegado en **Render** como servicio web, lo que lo hace público y
+accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
+
+1. Conecta el repositorio de GitHub a Render (New → Web Service).
+2. **Build command:** `pip install -r requirements.txt`
+3. **Start command:** el que arranque tu app (p. ej. `gunicorn main:app` o `python main.py`).
+4. Añade la variable de entorno **`OPENWEATHER_API_KEY`** en el panel de Render
+   (Environment). **Nunca** subas el token al repo.
+5. Render te da una URL pública tipo `https://santi-go.onrender.com`, que es la que
+   consumen tanto el dashboard (`$base_url`) como la alerta.
+
+> Plan gratuito: el servicio se suspende tras un periodo de inactividad y la primera
+> petición lo "despierta" (~30–50 s). Es normal, no es un fallo.
+
 ---
 
 ## 3. Importar el dashboard en Grafana
+
+> Estos pasos valen tanto para **Grafana Cloud** como para **Grafana local (OSS)**.
 
 1. **Instala el plugin Infinity** (si no lo tienes):
    *Connections → Add new connection → busca **Infinity** (`yesoreyeram-infinity-datasource`) → Install.*
@@ -103,7 +131,16 @@ curl http://localhost:5000/api/galicia/deporte
 3. **Importa el dashboard:**
    *Dashboards → New → Import → Upload JSON file →* selecciona `dashboard.json`.
 4. En la pantalla de import te pedirá el datasource: **elige tu Infinity**.
+   Si vas a reemplazar un dashboard existente, deja el **UID** en `santi-go-galicia` para
+   que lo sobrescriba en vez de crear un duplicado.
 5. Arriba verás dos controles: **Concello** (`$municipio`) y **URL del backend** (`$base_url`).
+   - En **Grafana Cloud**, pon `$base_url` = `https://santi-go.onrender.com`.
+   - En **Grafana local**, puedes usar `http://localhost:5000` si corres el backend en tu PC.
+
+> **Importante — usa siempre `$base_url` en las queries de los paneles.** Todos los paneles
+> deben construir su URL como `${base_url}/api/galicia/deporte`, nunca con `localhost` escrito
+> a mano. Si un panel tiene la URL fija a `http://localhost:5000`, funcionará en tu PC pero
+> saldrá **vacío** en Grafana Cloud (allí `localhost` no es tu backend).
 
 ---
 
@@ -111,6 +148,9 @@ curl http://localhost:5000/api/galicia/deporte
 
 El panel Geomap ya viene configurado, pero estos son los campos que lo hacen funcionar:
 
+- **Base layer:** `Open Street Map`
+  *(evita el basemap por defecto de CARTO: desde 2025 exige API key y muestra una marca de
+  agua "API KEY REQUIRED" sobre el mapa. OpenStreetMap es gratuito y sin key.)*
 - **Layer type:** `Markers`
 - **Location mode:** `Coords`
   - **Latitude field →** `latitud`
@@ -167,8 +207,9 @@ sola regla que genera **una instancia por cada concello no apto**, con su nombre
 2. **Define query and alert condition** → activa **Advanced options** y selecciona tu **datasource Infinity**.
 3. **Query A** (el truco multidimensional está aquí):
    - **Type:** `JSON` · **Source:** `URL` · **Parser:** `Backend` · **Format:** `Table`
-   - **URL:** `http://localhost:5000/api/galicia/deporte`
-     *(en Grafana Cloud pon aquí tu URL de **ngrok**, no `localhost` — ver nota 5.5)*
+   - **URL:** `https://santi-go.onrender.com/api/galicia/deporte`
+     *(la alerta NO usa la variable `$base_url` del dashboard — ver nota 5.5 — así que la URL
+     va escrita directa. En local sería `http://localhost:5000/api/galicia/deporte`.)*
    - **Columns** (¡clave! solo UNA numérica):
      | Selector | Type |
      |---|---|
@@ -221,22 +262,25 @@ Si quieres versionar la config, créala por UI y luego usa **Export → Provisio
 
 La query de la alerta **no usa** la variable `$base_url` del dashboard (las reglas son
 independientes del dashboard). Por eso la URL va escrita directamente en la Query A:
-- **Grafana local:** `http://localhost:5000/...`
-- **Grafana Cloud:** tu URL pública de **ngrok** (`https://...ngrok-free.dev/...`).
+- **Grafana Cloud:** tu URL pública de Render (`https://santi-go.onrender.com/...`).
+- **Grafana local:** `http://localhost:5000/...`.
 
 ---
 
 ## 6. Notas técnicas (léelas, evitan dolores de cabeza)
 
 ### ⚠️ `localhost` vs Grafana Cloud — el punto más importante
-El datasource Infinity usa el **parser backend** (`jq-backend`): **el servidor de Grafana**
-hace la petición HTTP, no tu navegador.
+El datasource Infinity usa el **parser backend**: **el servidor de Grafana** hace la
+petición HTTP, no tu navegador. Por tanto el backend tiene que ser accesible desde internet.
 
 - **Grafana local (OSS/Docker en tu PC):** `http://localhost:5000` funciona perfecto.
-- **Grafana Cloud:** los servidores de Grafana **NO ven tu `localhost`** (por eso usabas ngrok).
-  1. `ngrok http 5000`
-  2. Copia la URL `https://....ngrok-free.dev`
-  3. Pégala en la variable **`$base_url`** del dashboard **y** en la URL de la **Query A de la alerta**.
+- **Grafana Cloud:** los servidores de Grafana **NO ven tu `localhost`**. La solución es tener
+  el backend desplegado en un servicio público — en este proyecto, **Render**
+  (`https://santi-go.onrender.com`). Pega esa URL en la variable **`$base_url`** del dashboard
+  **y** en la URL de la **Query A de la alerta**.
+
+  *(Durante el desarrollo también puede usarse un túnel como ngrok apuntando a tu localhost,
+  pero Render es la opción estable y permanente, y no depende de tener el PC encendido.)*
 
 ### CORS
 Con el parser backend no hay problema de CORS (servidor→servidor). Aun así, el backend
@@ -244,7 +288,8 @@ incluye `flask-cors` activado como red de seguridad por si usas Infinity en modo
 
 ### Token de OpenWeather API
 - Se pide registrándote en OpenWeather API.
-- Va **solo** en `.env` (`OPENWEATHER_API_KEY`). Nunca en el código ni en git.
+- Va **solo** en `.env` (`OPENWEATHER_API_KEY`) en local, y como **variable de entorno en
+  Render** en producción. Nunca en el código ni en git.
 - Si ves error 401, suele ser token inválido o una clave recién creada aún sin activar
   (las claves nuevas de OpenWeather tardan desde minutos hasta ~2 h en activarse).
 
