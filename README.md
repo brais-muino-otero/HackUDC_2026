@@ -132,8 +132,8 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
 
 > Plan gratuito: el servicio se suspende tras un periodo de inactividad y la primera
 > petición lo "despierta" (~30–50 s). Es normal, no es un fallo.
-> El backend responde en sus rutas (`/api/galicia/deporte`, `/health`); la raíz `/` no
-> tiene página y devuelve *Not Found* — es lo esperado en una API.
+> La raíz `/` devuelve un JSON de bienvenida con la descripción del servicio y la lista
+> de endpoints disponibles; los datos están en `/api/galicia/deporte` y el estado en `/health`.
 
 ---
 

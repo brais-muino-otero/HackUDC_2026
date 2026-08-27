@@ -99,10 +99,7 @@ def obtener_datos():
         with ThreadPoolExecutor(max_workers=config.MAX_WORKERS) as pool:
             registros = list(pool.map(_construir_registro, config.CONCELLOS))
 
-    res = jsonify(registros)
-    # Cabecera para que ngrok no inyecte su página de aviso (rompería el JSON).
-    res.headers.add("ngrok-skip-browser-warning", "true")
-    return res
+    return jsonify(registros)
 
 
 @app.route("/health", methods=["GET"])
@@ -111,7 +108,7 @@ def health():
 
 
 if __name__ == "__main__":
-    # host 0.0.0.0 -> accesible desde ngrok/red local.
+    # host 0.0.0.0 -> accesible desde Render/red local.
     # Render asigna el puerto mediante la variable de entorno PORT;
     # en local (sin esa variable) cae al 5000 de siempre.
     port = int(os.environ.get("PORT", 5000))
