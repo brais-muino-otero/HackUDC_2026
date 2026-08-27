@@ -12,6 +12,12 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 
 **🌐 Dashboard en vivo (Grafana Cloud):**
 https://proudballoon610.grafana.net/d/santi-go-galicia
+*(datos en tiempo real; puede requerir sesión de Grafana según la configuración de acceso)*
+
+**📸 Vista pública del dashboard (snapshot, sin login):**
+https://proudballoon610.grafana.net/dashboard/snapshot/SIqkgs6yfZ45g1eU8uCkRPb0yux9qU9i
+*(instantánea fija para ver el aspecto del dashboard sin cuenta; los datos son del momento
+en que se capturó, no se actualizan)*
 
 **Backend (Render):** https://santi-go.onrender.com
 
