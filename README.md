@@ -327,6 +327,13 @@ OpenWeather API espera `lat`/`lon` como parámetros separados. El cliente ya lo 
 paralelo (`MAX_WORKERS=6`). Como el dato cambia poco en ese margen de tiempo, no pierdes
 frescura y evitas saturar la API. Ajusta ambos valores en `config.py`.
 
+> **¿Por qué el backend local y el de Render muestran valores ligeramente distintos?**
+> Son **backends independientes con cachés separadas**: cada uno consultó OpenWeather en un
+> instante distinto, y el tiempo real cambia entre una consulta y otra. Por eso el dashboard
+> que apunta a `localhost` y el que apunta a Render pueden marcar, por ejemplo, 15.8 °C vs
+> 15.4 °C a la vez. **Es esperado, no un error.** Si necesitas datos idénticos en dos
+> dashboards, haz que **ambos apunten al mismo backend** (misma `$base_url`).
+
 ### Verificación del parseo
 La respuesta JSON de OpenWeather API se parsea de forma defensiva (lee `main.temp`,
 `rain.1h` y `wind.speed`; normaliza m/s → km/h). Si OpenWeather cambiara algún nombre de
