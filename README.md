@@ -24,6 +24,8 @@ https://proudballoon610.grafana.net/d/santi-go-galicia
 
 **📈 Estado del backend en vivo (UptimeRobot):** https://stats.uptimerobot.com/rhc92PF4VK
 
+**🤖 Bot de Telegram:** https://t.me/deporte_clima_bot
+
 > Nota: el dashboard está alojado en el plan gratuito de Grafana Cloud y el backend en el
 > plan gratuito de Render. Render "duerme" el servicio tras un rato de inactividad, así que
 > la primera carga tras un tiempo parado puede tardar ~30–50 s en responder (luego va fluido).
