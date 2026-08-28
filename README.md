@@ -20,11 +20,12 @@ https://proudballoon610.grafana.net/dashboard/snapshot/SIqkgs6yfZ45g1eU8uCkRPb0y
 https://proudballoon610.grafana.net/d/santi-go-galicia
 *(datos en tiempo real; puede requerir sesión de Grafana según la configuración de acceso)*
 
+**🤖 Bot de Telegram:** https://t.me/deporte_clima_bot
+*(publica las alertas de concellos no aptos para deporte)*
+
 **Backend (Render):** https://santi-go.onrender.com
 
 **📈 Estado del backend en vivo (UptimeRobot):** https://stats.uptimerobot.com/rhc92PF4VK
-
-**🤖 Bot de Telegram:** https://t.me/deporte_clima_bot
 
 > Nota: el dashboard está alojado en el plan gratuito de Grafana Cloud y el backend en el
 > plan gratuito de Render. Render "duerme" el servicio tras un rato de inactividad, así que
