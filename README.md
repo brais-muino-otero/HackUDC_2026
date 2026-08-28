@@ -24,8 +24,10 @@ https://proudballoon610.grafana.net/d/santi-go-galicia
 *(publica las alertas de concellos no aptos para deporte)*
 
 **Backend (Render):** https://santi-go.onrender.com
+*(API REST; sirve los datos meteorológicos en JSON — la raíz muestra info y endpoints)*
 
 **📈 Estado del backend en vivo (UptimeRobot):** https://stats.uptimerobot.com/rhc92PF4VK
+*(página de estado pública con el uptime y el tiempo de respuesta del backend)*
 
 > Nota: el dashboard está alojado en el plan gratuito de Grafana Cloud y el backend en el
 > plan gratuito de Render. Render "duerme" el servicio tras un rato de inactividad, así que
