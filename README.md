@@ -4,10 +4,12 @@ Plataforma regional que conecta la API de **OpenWeatherMap** con **Grafana**
 para responder de un vistazo: *¿es buen momento para hacer deporte al aire libre
 en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 
+✅ **Estado del proyecto: 100% Cloud.** Todo el sistema (backend, visualización y motor de alertas) funciona de forma autónoma en la nube 24/7, sin depender de ejecuciones locales (aunque mantiene soporte para desarrollo local).
+
 - **Backend:** Python + Flask (modular), desplegado en **Render**
 - **Datos:** OpenWeatherMap API (tiempo real)
 - **Visualización:** Grafana Cloud + plugin **Infinity** (gauges, stats, tabla, medias y un **Geomap**)
-- **Alertas:** Grafana Alerting → **Telegram** (alerta por concello no apto)
+- **Alertas:** Grafana Cloud Alerting → **Telegram** (alerta proactiva por concello no apto)
 - **Keep-alive:** UptimeRobot (evita que el plan gratuito de Render hiberne el backend)
 
 Enlaces del proyecto:
@@ -209,105 +211,39 @@ El panel Geomap ya viene configurado, pero estos son los campos que lo hacen fun
 
 ---
 
-## 5. 🔔 Alertas en Telegram (Nivel Avanzado)
+## 5. 🔔 Alertas en Telegram (Producción vs Local)
 
-Objetivo: que el ciudadano reciba un aviso en Telegram **sin mirar gráficas** cuando
-un concello no sea apto para deporte. Montamos una **alerta multidimensional**: una
-sola regla que genera **una instancia por cada concello no apto**, con su nombre y motivo.
+Objetivo: que el ciudadano reciba un aviso en Telegram **sin mirar gráficas** cuando un concello no sea apto para deporte. Montamos una **alerta multidimensional**: una sola regla que genera una instancia separada por cada concello no apto.
 
-### 5.1 Crear el bot y obtener el token + chat ID
+El sistema está preparado para funcionar en dos entornos: en **Grafana Cloud** (producción, recomendado) o en **Grafana Local** (desarrollo).
 
-1. En Telegram, abre **@BotFather** → `/newbot` → ponle nombre y un usuario que acabe en `bot`.
-   Copia el **HTTP API token** (formato `123456789:AAporejemplo...`).
-2. Crea un **grupo** en Telegram y **añade tu bot** a ese grupo. Envía un mensaje cualquiera al grupo.
-3. Obtén el **Chat ID**: en el navegador abre
-   `https://api.telegram.org/bot<TU_TOKEN>/getUpdates`
-   y busca en el JSON el campo `chat.id` (en grupos suele ser **negativo**, p. ej. `-1001234567890`;
-   copia también el signo menos).
+### 5.1 Crear el bot y obtener el Chat ID (Común)
+1. En Telegram, usa **@BotFather** para crear un bot y copia su **HTTP API token**.
+2. Añádelo a un grupo y envía un mensaje cualquiera.
+3. Abre `https://api.telegram.org/bot<TU_TOKEN>/getUpdates` y busca en el JSON el campo `chat.id` (en grupos es negativo, ej: `-1001234567890`).
 
-### 5.2 Crear el contact point (UI — funciona en Cloud y OSS)
+### 5.2 Entorno de Producción: Grafana Cloud + Render (RECOMENDADO)
+Al estar configurado en la nube apuntando a Render, **funciona 24/7 sin depender de un PC encendido**. Todo se configura por la interfaz web de Grafana Cloud:
 
-*Alerting → Contact points → + Add contact point*
-- **Name:** `telegram-santi-go`
-- **Integration:** `Telegram`
-- **BOT API Token:** tu token
-- **Chat ID:** el ID del grupo (con el `-` si es negativo)
-- *(Opcional)* **Message** — mensaje bonito en Telegram, con una línea por alerta
-  (usa las etiquetas directamente para que ciudad y motivo salgan siempre):
-  ```
-  {{ range .Alerts.Firing }}🔴 ALERTA · Santi & Go
-  Estado del deporte en {{ .Labels.ciudad }}: {{ .Labels.recomendacion }}
-  {{ end }}{{ range .Alerts.Resolved }}🟢 RESUELTO · Santi & Go
-  Estado del deporte en {{ .Labels.ciudad }}: ¡Ideal para deporte!
-  {{ end }}
-  ```
-- Pulsa **Test** (debe llegarte un mensaje de prueba al grupo) y **Save contact point**.
+1. **Crear Contact Point:** *Alerting → Contact points → + Add contact point*. Llámalo `telegram-santi-go`, selecciona *Telegram*, pon tu Token y Chat ID.
+2. **Crear la regla de alerta:** *Alerting → Alert rules → + New alert rule*.
+   - **Query:** Usa tu datasource Infinity. Type `JSON`, Source `URL`, Parser `JQ`, Method `GET`.
+   - **URL:** `https://santi-go.onrender.com/api/galicia/deporte` *(Debe apuntar a tu backend en Render).*
+   - **Expresión (Math):** `$A == 0` (evalúa si el campo `apto` es 0).
+   - **Labels:** Añade una etiqueta personalizada (ej. `alerta = deporte`) y guárdala en un grupo de evaluación de `1m`.
+   - **Message (Summary):** `Estado del deporte en {{ $labels.ciudad }}: {{ $labels.recomendacion }}`
+3. **Agrupación por concello (Notification Policy):** *Alerting → Notification configuration → Notification policies → + New specific policy*.
+   - **Matching labels:** `alerta = deporte` (la etiqueta del paso anterior).
+   - **Contact point:** `telegram-santi-go`.
+   - **Override grouping:** Actívalo, selecciona *Custom* y escribe: `grafana_folder`, `alertname`, y **`ciudad`**. (Añadir `ciudad` es clave para que los mensajes lleguen separados).
 
-### 5.3 Crear la regla de alerta (UI)
+### 5.3 Entorno de Desarrollo: Grafana Local (OSS)
+Si corres Grafana self-hosted en tu PC para hacer pruebas o desarrollo local, la alerta debe apuntar a `http://localhost:5000/...`. 
 
-*Alerting → Alert rules → + New alert rule*
-
-1. **Nombre:** `Concello no apto para deporte`.
-2. **Define query and alert condition** → activa **Advanced options** y selecciona tu **datasource Infinity**.
-3. **Query A** (el truco multidimensional está aquí):
-   - **Type:** `JSON` · **Source:** `URL` · **Parser:** `Backend` · **Format:** `Table`
-   - **URL:** `https://santi-go.onrender.com/api/galicia/deporte`
-     *(la alerta NO usa la variable `$base_url` del dashboard — ver nota 5.5 — así que la URL
-     va escrita directa. En local sería `http://localhost:5000/api/galicia/deporte`.)*
-   - **Columns** (¡clave! solo UNA numérica):
-     | Selector | Type |
-     |---|---|
-     | `ciudad` | **String** → será etiqueta |
-     | `recomendacion` | **String** → será etiqueta |
-     | `apto` | **Number** → valor a evaluar |
-4. **Expresiones** — borra el `Reduce` que Grafana añade por defecto (con datos en tabla
-   no hace falta y colapsaría las filas) y añade una expresión **Threshold**:
-   - **Input:** `A` · **Condition:** `IS BELOW` · valor **`1`**
-   - Marca esta expresión (`C`) como **alert condition**.
-
-   > Por qué funciona: Grafana convierte cada fila de la tabla en una instancia de alerta.
-   > Como `apto` es la única columna numérica, es el valor evaluado; `ciudad` y
-   > `recomendacion` (texto) pasan a ser etiquetas. El umbral `apto < 1` deja en
-   > **Alerting** solo las filas con `apto = 0` (no aptas) y en **Normal** las aptas.
-
-5. **Evaluation behavior:** crea un *Evaluation group* (p. ej. `Santi & Go`) con intervalo
-   `1m` y **Pending period** `0s` (aviso inmediato). *(Validado en pruebas reales: con
-   intervalos más agresivos, como `10s`, el motor de alerting puede generar notificaciones
-   incompletas al procesar muchas alertas a la vez; `1m` es estable.)*
-6. **Agrupación por concello** (para recibir **un mensaje por concello**, no todos juntos):
-   en la propia regla, dentro de *Silencio, agrupación y temporización*, activa
-   **Anular agrupación** y añade las etiquetas `grafana_folder`, `alertname`, `ciudad`.
-   Activa también **Anular tiempos** con: *Group wait* `0s`, *Group interval* `1m`,
-   *Repeat interval* `1h`. *(Alternativa equivalente: añadir `ciudad` al "Group by" de la
-   Notification policy por defecto en Alerting → Notification policies.)*
-7. **Configure labels and notifications:**
-   - **Summary** (annotation):
-     `⚠️ No apto para deporte en {{ $labels.ciudad }} — {{ $labels.recomendacion }}`
-   - En **Notifications**, **Select contact point → `telegram-santi-go`**.
-8. **Save rule and exit.** Para probar en seco, baja temporalmente algún umbral en
-   `config.py` (p. ej. `UMBRAL_VIENTO_KMH = 1`) para forzar un "no apto" y ver llegar el mensaje.
-
-### 5.4 (Bonus) Provisioning para Grafana local/OSS
-
-Si corres Grafana self-hosted (Docker/local), tienes los ficheros listos en
-`provisioning/alerting/`. Cópialos a `/etc/grafana/provisioning/alerting/`,
-exporta el token y reinicia Grafana:
-
-```bash
+Tienes los ficheros de aprovisionamiento listos en la carpeta `provisioning/alerting/`. Cópialos a `/etc/grafana/provisioning/alerting/`, exporta el token y reinicia Grafana:
 export TELEGRAM_BOT_TOKEN="123456789:AA..."
 export TELEGRAM_CHAT_ID="-1001234567890"
-# y sustituye <UID_INFINITY> en alert-rule-no-apto.yaml por el UID de tu datasource Infinity
-```
-
-En **Grafana Cloud** el provisioning por fichero no está disponible: usa la UI (5.2 y 5.3).
-Si quieres versionar la config, créala por UI y luego usa **Export → Provisioning (YAML)**.
-
-### 5.5 Nota importante para la alerta
-
-La query de la alerta **no usa** la variable `$base_url` del dashboard (las reglas son
-independientes del dashboard). Por eso la URL va escrita directamente en la Query A:
-- **Grafana Cloud:** tu URL pública de Render (`https://santi-go.onrender.com/...`).
-- **Grafana local:** `http://localhost:5000/...`.
+y sustituye <UID_INFINITY> en alert-rule-no-apto.yaml por el UID de tu datasource Infinity
 
 ---
 
