@@ -241,8 +241,10 @@ Al estar configurado en la nube apuntando a Render, **funciona 24/7 sin depender
 Si corres Grafana self-hosted en tu PC para hacer pruebas o desarrollo local, la alerta debe apuntar a `http://localhost:5000/...`. 
 
 Tienes los ficheros de aprovisionamiento listos en la carpeta `provisioning/alerting/`. Cópialos a `/etc/grafana/provisioning/alerting/`, exporta el token y reinicia Grafana:
-export TELEGRAM_BOT_TOKEN="123456789:AA..."
-export TELEGRAM_CHAT_ID="-1001234567890"
+
+`export TELEGRAM_BOT_TOKEN="123456789:AA..."`
+`export TELEGRAM_CHAT_ID="-1001234567890"`
+
 y sustituye <UID_INFINITY> en alert-rule-no-apto.yaml por el UID de tu datasource Infinity
 
 ---
