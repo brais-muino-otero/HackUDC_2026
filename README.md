@@ -245,7 +245,7 @@ Tienes los ficheros de aprovisionamiento listos en la carpeta `provisioning/aler
 export TELEGRAM_BOT_TOKEN="123456789:AA..."
 export TELEGRAM_CHAT_ID="-1001234567890"
 ```
-y sustituye `<UID_INFINITY>` en alert-rule-no-apto.yaml por el UID de tu datasource Infinity
+y sustituye `<UID_INFINITY>` en `alert-rule-no-apto.yaml` por el UID de tu datasource Infinity.
 
 ---
 
