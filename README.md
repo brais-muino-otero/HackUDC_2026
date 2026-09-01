@@ -15,7 +15,7 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 Enlaces del proyecto:
 
 **📸 Vista pública del dashboard (snapshot, sin login):**
-https://proudballoon610.grafana.net/dashboard/snapshot/SIqkgs6yfZ45g1eU8uCkRPb0yux9qU9i
+https://proudballoon610.grafana.net/dashboard/snapshot/q9W018LwxLoHEgeUqy7EYAvsR6sbY07g
 *(instantánea fija para ver el aspecto del dashboard sin cuenta; los datos son del momento en que se capturó, no se actualizan)*
 
 **🌐 Dashboard en vivo (Grafana Cloud, con login):**
