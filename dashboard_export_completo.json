@@ -633,30 +633,26 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 30,
+          "max": 15,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#73BF69",
                 "value": 0
               },
               {
-                "color": "light-blue",
-                "value": 1
+                "color": "#5794F2",
+                "value": 2
               },
               {
-                "color": "blue",
-                "value": 5
+                "color": "#1F60C4",
+                "value": 8
               },
               {
-                "color": "dark-blue",
+                "color": "#8F3BB8",
                 "value": 15
-              },
-              {
-                "color": "dark-purple",
-                "value": 30
               }
             ]
           },
@@ -1091,7 +1087,7 @@
           }
         }
       ],
-      "title": "Concellos por estado meteorológico para deporte",
+      "title": "📊 Concellos por estado meteorológico",
       "transformations": [
         {
           "id": "filterByValue",
@@ -1368,7 +1364,7 @@
           }
         }
       ],
-      "title": "Tiempo Meteorológico por Concello",
+      "title": "📋 Tiempo meteorológico por concello",
       "transformations": [
         {
           "id": "organize",
@@ -1501,7 +1497,7 @@
           }
         }
       ],
-      "title": "Temperatura Media Galicia",
+      "title": "🌡️ Temperatura media Galicia",
       "type": "gauge"
     },
     {
@@ -1601,7 +1597,7 @@
           }
         }
       ],
-      "title": "Viento Medio Galicia",
+      "title": "💨 Viento medio Galicia",
       "type": "gauge"
     },
     {
@@ -1612,30 +1608,26 @@
       "description": "Promedio de la precipitación de todos los concellos monitorizados, en milímetros. Da una idea del nivel general de lluvia en el conjunto de Galicia.",
       "fieldConfig": {
         "defaults": {
-          "max": 30,
+          "max": 15,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#deb6f2",
+                "color": "#73bf69",
                 "value": 0
               },
               {
-                "color": "light-blue",
-                "value": 1
+                "color": "#5794f2",
+                "value": 2
               },
               {
-                "color": "blue",
-                "value": 5
+                "color": "#1f60c4",
+                "value": 8
               },
               {
-                "color": "dark-blue",
+                "color": "#8f3bb8",
                 "value": 15
-              },
-              {
-                "color": "dark-purple",
-                "value": 30
               }
             ]
           },
@@ -1701,7 +1693,7 @@
           }
         }
       ],
-      "title": "Precipitación Media Galicia",
+      "title": "🌧️ Precipitación media Galicia",
       "type": "gauge"
     }
   ],
@@ -1886,6 +1878,6 @@
   "timezone": "browser",
   "title": "Santi & Go · Tiempo & Deporte en Galicia",
   "uid": "santi-go-galicia",
-  "version": 57,
+  "version": 69,
   "weekStart": ""
 }
