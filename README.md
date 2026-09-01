@@ -47,7 +47,7 @@ santi-go/
 ├── evaluator.py                   # Lógica "apto / no apto" (pura, testeable)
 ├── generate_dashboard.py          # Genera dashboard.json a partir del catálogo de concellos
 ├── dashboard.json                 # Dashboard BASE (8 paneles) generado por el script
-├── dashboard_export_completo.json # Dashboard COMPLETO (11 paneles) exportado de Grafana
+├── dashboard_export_completo.json # Dashboard COMPLETO (13 paneles) exportado de Grafana
 ├── provisioning/
 │   └── alerting/
 │       ├── contact-point-telegram.yaml
@@ -65,7 +65,7 @@ El repo incluye **dos** definiciones de dashboard, y conviene saber cuál usar:
 | Archivo | Paneles | Cómo se mantiene | Cuándo usarlo |
 |---|---|---|---|
 | `dashboard.json` | **8** (base): cabecera, Concello, ¿Apto?, Recomendación, 3 gauges y Geomap | Se **genera** con `generate_dashboard.py` a partir del catálogo de `config.py` | Punto de partida / regenerar tras cambiar concellos |
-| `dashboard_export_completo.json` | **11** (completo): los 8 anteriores **+ tabla por concello + 3 medias de Galicia + gráfico de barras por estado** | Exportado directamente **desde Grafana** (los paneles extra se añadieron por UI) | **Importar la versión completa** tal cual en Grafana Cloud / OSS |
+| `dashboard_export_completo.json` | **13** (completo): los 8 anteriores **+ tabla por concello + 3 medias de Galicia + gráfico de barras por estado** | Exportado directamente **desde Grafana** (los paneles extra se añadieron por UI) | **Importar la versión completa** tal cual en Grafana Cloud / OSS |
 
 > **Para ver el dashboard tal como está en producción, importa `dashboard_export_completo.json`.**
 > El `dashboard.json` es la base reproducible desde código; los paneles de tabla, medias y
@@ -192,7 +192,7 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
 
 ## 4. Paneles del dashboard
 
-El dashboard completo tiene **11 paneles**. Cada uno lleva una **descripción integrada**
+El dashboard completo tiene **13 paneles**. Cada uno lleva una **descripción integrada**
 (icono ⓘ en la esquina del panel) que explica qué representa y cómo se calcula, y usa el
 **color con intención** para que el estado se entienda de un vistazo.
 
