@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_YESOREYERAM-INFINITY-DATASOURCE",
-      "label": "yesoreyeram-infinity-datasource",
+      "name": "DS_GRAFANACLOUD-INFINITY",
+      "label": "grafanacloud-infinity",
       "description": "",
       "type": "datasource",
       "pluginId": "yesoreyeram-infinity-datasource",
@@ -83,7 +83,7 @@
   "liveNow": false,
   "panels": [
     {
-      "description": "Panel de presentación del dashboard. Identifica el proyecto —Tiempo & Deporte en Galicia— y resume su propósito: informar en tiempo real de si las condiciones meteorológicas son adecuadas para practicar deporte al aire libre en los concellos de Galicia, a partir de los datos de OpenWeather API.",
+      "description": "Panel de presentación del dashboard. Identifica el proyecto —Santi & Go · Tiempo & Deporte en Galicia\n— y resume su propósito: informar en tiempo real de si las condiciones meteorológicas son adecuadas para practicar deporte al aire libre en los concellos de Galicia, a partir de los datos de OpenWeather API.",
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -97,7 +97,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<div style=\"text-align:center; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); padding:16px; border-radius:8px;\"><h1 style=\"color:#72B7ED; font-size:1.9em; margin:0; letter-spacing:2px;\">🌤️ TIEMPO &amp; DEPORTE EN GALICIA</h1><p style=\"color:#90caf9; margin:6px 0 0 0; font-size:0.95em;\">Condiciones meteorológicas en tiempo real para practicar deporte al aire libre · OpenWeather</p></div>",
+        "content": "<div style=\"text-align:center; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); padding:16px; border-radius:8px;\">\r\n  <h1 style=\"color:#72B7ED; font-size:1.9em; margin:0; letter-spacing:2px;\">\r\n    🌤️ SANTI &amp; GO · TIEMPO &amp; DEPORTE EN GALICIA\r\n  </h1>\r\n  <p style=\"color:#90caf9; margin:6px 0 0 0; font-size:0.95em;\">\r\n    Condiciones meteorológicas en tiempo real para practicar deporte al aire libre en Galicia · OpenWeather\r\n  </p>\r\n</div>",
         "mode": "html"
       },
       "pluginVersion": "13.3.0-32457798232",
@@ -1719,7 +1719,7 @@
         "allowCustomValue": true,
         "current": {
           "text": "",
-          "value": "${DS_YESOREYERAM-INFINITY-DATASOURCE}",
+          "value": "${DS_GRAFANACLOUD-INFINITY}",
           "selected": true
         },
         "includeAll": false,
@@ -1886,6 +1886,6 @@
   "timezone": "browser",
   "title": "Santi & Go · Tiempo & Deporte en Galicia",
   "uid": "santi-go-galicia",
-  "version": 56,
+  "version": 57,
   "weekStart": ""
 }
