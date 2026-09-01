@@ -37,8 +37,8 @@ MAX_WORKERS = 6
 # ---------------------------------------------------------------------------
 # Umbrales para evaluar si es apto para deporte al aire libre
 # ---------------------------------------------------------------------------
-UMBRAL_LLUVIA_MM = 0.0     # mm de precipitación a partir de la cual NO se recomienda
-UMBRAL_TEMP_MIN = 5.0      # ºC: por debajo, frío extremo
+UMBRAL_LLUVIA_MM = 2.0     # mm de precipitación a partir de la cual NO se recomienda
+UMBRAL_TEMP_MIN = 23.0      # ºC: por debajo, frío extremo
 UMBRAL_TEMP_MAX = 30.0     # ºC: por encima, calor extremo
 UMBRAL_VIENTO_KMH = 25.0   # km/h: por encima, demasiado viento
 
