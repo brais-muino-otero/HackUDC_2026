@@ -13,6 +13,12 @@
   "__requires": [
     {
       "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "gauge",
       "name": "Gauge",
       "version": ""
@@ -27,13 +33,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "13.0.2"
-    },
-    {
-      "type": "panel",
-      "id": "piechart",
-      "name": "Pie chart",
-      "version": ""
+      "version": "13.3.0-32457798232"
     },
     {
       "type": "panel",
@@ -57,7 +57,7 @@
       "type": "datasource",
       "id": "yesoreyeram-infinity-datasource",
       "name": "Infinity",
-      "version": "3.8.0"
+      "version": "4.0.0"
     }
   ],
   "annotations": {
@@ -83,6 +83,7 @@
   "liveNow": false,
   "panels": [
     {
+      "description": "Panel de presentación del dashboard. Identifica el proyecto —Tiempo & Deporte en Galicia— y resume su propósito: informar en tiempo real de si las condiciones meteorológicas son adecuadas para practicar deporte al aire libre en los concellos de Galicia, a partir de los datos de OpenWeather API.",
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -99,7 +100,7 @@
         "content": "<div style=\"text-align:center; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); padding:16px; border-radius:8px;\"><h1 style=\"color:#72B7ED; font-size:1.9em; margin:0; letter-spacing:2px;\">🌤️ TIEMPO &amp; DEPORTE EN GALICIA</h1><p style=\"color:#90caf9; margin:6px 0 0 0; font-size:0.95em;\">Condiciones meteorológicas en tiempo real para practicar deporte al aire libre · OpenWeather</p></div>",
         "mode": "html"
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "type": "text"
     },
     {
@@ -107,10 +108,11 @@
         "type": "yesoreyeram-infinity-datasource",
         "uid": "${ds_infinity}"
       },
+      "description": "Muestra el concello actualmente seleccionado en el desplegable superior. Todos los paneles de detalle (temperatura, viento, precipitación, aptitud y recomendación) se refieren a este concello. Sirve de referencia para saber en todo momento a qué localidad corresponden los datos mostrados.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#5794F2",
+            "fixedColor": "#7b5dd6",
             "mode": "fixed"
           },
           "thresholds": {
@@ -119,10 +121,6 @@
               {
                 "color": "green",
                 "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -153,7 +151,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [
@@ -192,6 +190,7 @@
         "type": "yesoreyeram-infinity-datasource",
         "uid": "${ds_infinity}"
       },
+      "description": "Veredicto binario para el concello seleccionado: indica si en este momento es apto (✅) o no apto (❌) para practicar deporte al aire libre. El resultado se obtiene aplicando los umbrales de temperatura, precipitación y viento sobre los datos meteorológicos actuales; basta con que un factor supere su límite para que el concello se marque como no apto.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -254,7 +253,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [
@@ -293,22 +292,50 @@
         "type": "yesoreyeram-infinity-datasource",
         "uid": "${ds_infinity}"
       },
+      "description": "Explica el veredicto del panel anterior con un texto legible. Si el concello es apto, muestra \"¡Ideal para deporte!\"; si no lo es, indica el motivo concreto que lo impide (lluvia, calor, frío o viento extremos). Traduce la evaluación técnica en un mensaje directo para el ciudadano.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "fixedColor": "#73BF69",
-            "mode": "fixed"
+            "mode": "thresholds"
           },
+          "mappings": [
+            {
+              "options": {
+                "No recomendado · Calor extremo": {
+                  "color": "#f2495c",
+                  "index": 2
+                },
+                "No recomendado · Frío extremo": {
+                  "color": "#38bfe0",
+                  "index": 3
+                },
+                "No recomendado · Lluvia extrema": {
+                  "color": "#1f60c4",
+                  "index": 1
+                },
+                "No recomendado · Viento extremo": {
+                  "color": "#ff9830",
+                  "index": 4
+                },
+                "Sin datos suficientes": {
+                  "color": "#8e8e8e",
+                  "index": 5
+                },
+                "¡Ideal para deporte!": {
+                  "color": "#73bf69",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#73BF69",
                 "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -339,7 +366,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [
@@ -378,6 +405,7 @@
         "type": "yesoreyeram-infinity-datasource",
         "uid": "${ds_infinity}"
       },
+      "description": "Temperatura del aire, en grados Celsius, del concello seleccionado, obtenida en tiempo real de OpenWeather. El indicador cambia de color según el rango: los valores extremos —por debajo del mínimo o por encima del máximo configurados— señalan condiciones desaconsejables para el ejercicio al aire libre.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -449,7 +477,7 @@
         "sparkline": true,
         "textMode": "auto"
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [
@@ -488,6 +516,7 @@
         "type": "yesoreyeram-infinity-datasource",
         "uid": "${ds_infinity}"
       },
+      "description": "Velocidad del viento, en kilómetros por hora, del concello seleccionado. El valor procede de OpenWeather (convertido de m/s a km/h) y se compara con el umbral configurado: por encima de él, el viento se considera demasiado fuerte para la práctica deportiva y contribuye a marcar el concello como no apto.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -559,7 +588,7 @@
         "sparkline": true,
         "textMode": "auto"
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [
@@ -598,6 +627,7 @@
         "type": "yesoreyeram-infinity-datasource",
         "uid": "${ds_infinity}"
       },
+      "description": "Precipitación acumulada, en milímetros, del concello seleccionado. Refleja la lluvia registrada en tiempo real según OpenWeather. Cuando supera el umbral configurado, las condiciones se consideran de lluvia extrema y no recomendables para hacer deporte al aire libre.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -669,7 +699,7 @@
         "sparkline": true,
         "textMode": "auto"
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [
@@ -708,10 +738,11 @@
         "type": "yesoreyeram-infinity-datasource",
         "uid": "${ds_infinity}"
       },
+      "description": "Vista geográfica de todos los concellos monitorizados sobre el mapa de Galicia. Cada punto representa un concello y su color indica su aptitud actual para el deporte: verde si es apto, rojo si no lo es. Permite captar de un vistazo el estado global de la comunidad y localizar dónde las condiciones son o no favorables. Al situar el cursor sobre un punto se muestran los detalles de ese concello.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
             "hideFrom": {
@@ -806,7 +837,8 @@
                 },
                 "text": {
                   "field": "ciudad",
-                  "fixed": ""
+                  "fixed": "",
+                  "mode": "fixed"
                 },
                 "textConfig": {
                   "fontSize": 11,
@@ -821,7 +853,7 @@
               "id": "byRefId",
               "options": "A"
             },
-            "layer-tooltip": false,
+            "layer-tooltip": true,
             "location": {
               "latitude": "latitud",
               "longitude": "longitud",
@@ -838,6 +870,7 @@
         "view": {
           "allLayers": true,
           "dashboardVariable": false,
+          "dashboardVariableName": "apto",
           "id": "coords",
           "lat": 42.75,
           "lon": -7.95,
@@ -845,7 +878,7 @@
           "zoom": 7.3
         }
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [
@@ -931,78 +964,77 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "${ds_infinity}"
       },
+      "description": "Distribución en tiempo real de los concellos de Galicia según su aptitud para la práctica deportiva al aire libre. Cada barra representa uno de los posibles estados de alerta evaluados por el sistema: condiciones ideales o los distintos motivos de no recomendación (lluvia, calor, frío o viento extremos). El color de cada barra identifica el estado de un vistazo, y al situar el cursor sobre ella se muestra el número exacto de concellos que se encuentran en esa situación en este momento. Los estados se calculan aplicando los umbrales configurados de temperatura, precipitación y viento sobre los datos meteorológicos actuales obtenidos de OpenWeather, ofreciendo una visión inmediata del reparto de condiciones deportivas en toda Galicia.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Nº de concellos",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
+          },
+          "mappings": [
+            {
+              "options": {
+                "No recomendado · Calor extremo": {
+                  "color": "#f2495c",
+                  "index": 2
+                },
+                "No recomendado · Frío extremo": {
+                  "color": "#38bfe0",
+                  "index": 3
+                },
+                "No recomendado · Lluvia extrema": {
+                  "color": "#1f60c4",
+                  "index": 1
+                },
+                "No recomendado · Viento extremo": {
+                  "color": "#ff9830",
+                  "index": 4
+                },
+                "Sin datos suficientes": {
+                  "color": "#8e8e8e",
+                  "index": 5
+                },
+                "¡Ideal para deporte!": {
+                  "color": "#73bf69",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "ciudad (count)",
-                  "No recomendado · Calor extremo"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": true,
-                  "viz": true
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "No recomendado · Calor extremo"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "No recomendado · Lluvia"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 14,
@@ -1012,35 +1044,37 @@
       },
       "id": 11,
       "options": {
-        "displayLabels": [
-          "percent",
-          "value"
-        ],
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "colorByField": "recomendacion",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
         "legend": {
+          "calcs": [
+            "sum"
+          ],
           "displayMode": "list",
-          "placement": "bottom",
+          "placement": "right",
           "showLegend": true
         },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [],
-          "fields": "",
-          "values": true
-        },
-        "sort": "desc",
+        "orientation": "auto",
+        "showValue": "never",
+        "stacking": "none",
         "tooltip": {
           "hideZeros": false,
           "mode": "single",
           "sort": "none"
-        }
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [],
           "datasource": {
             "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+            "uid": "${ds_infinity}"
           },
           "filters": [],
           "format": "table",
@@ -1057,7 +1091,7 @@
           }
         }
       ],
-      "title": "Nº Concellos Aptos (verde) No Aptos (restantes) para Deporte",
+      "title": "Concellos por estado meteorológico para deporte",
       "transformations": [
         {
           "id": "filterByValue",
@@ -1104,13 +1138,14 @@
           }
         }
       ],
-      "type": "piechart"
+      "type": "barchart"
     },
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "${ds_infinity}"
       },
+      "description": "Detalle numérico de todos los concellos monitorizados en una sola vista, mostrado en forma de tabla. Para cada uno muestra su temperatura, viento, precipitación y la recomendación resultante, permitiendo comparar localidades entre sí y consultar los valores exactos que sustentan cada veredicto. Es la fuente de datos más completa del dashboard.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1124,7 +1159,8 @@
             "footer": {
               "reducers": []
             },
-            "inspect": false
+            "inspect": false,
+            "minWidth": 150
           },
           "decimals": 1,
           "thresholds": {
@@ -1133,10 +1169,6 @@
               {
                 "color": "green",
                 "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -1151,6 +1183,10 @@
               {
                 "id": "custom.width",
                 "value": 226
+              },
+              {
+                "id": "displayName",
+                "value": "Ciudad"
               }
             ]
           },
@@ -1162,7 +1198,15 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 165
+                "value": 150
+              },
+              {
+                "id": "unit",
+                "value": "lengthmm"
+              },
+              {
+                "id": "displayName",
+                "value": "Precipitación"
               }
             ]
           },
@@ -1174,7 +1218,11 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 240
+                "value": 270
+              },
+              {
+                "id": "displayName",
+                "value": "Recomendación"
               }
             ]
           },
@@ -1187,6 +1235,14 @@
               {
                 "id": "custom.width",
                 "value": 123
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
+              },
+              {
+                "id": "displayName",
+                "value": "Temperatura"
               }
             ]
           },
@@ -1199,6 +1255,79 @@
               {
                 "id": "custom.width",
                 "value": 124
+              },
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              },
+              {
+                "id": "displayName",
+                "value": "Viento"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ciudad",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 210
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Recomendación",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 267
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Precipitación",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 155
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Viento",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 161
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Temperatura",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 132
               }
             ]
           }
@@ -1206,7 +1335,7 @@
       },
       "gridPos": {
         "h": 22,
-        "w": 13,
+        "w": 14,
         "x": 4,
         "y": 47
       },
@@ -1214,20 +1343,15 @@
       "options": {
         "cellHeight": "sm",
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "temperatura"
-          }
-        ]
+        "sortBy": []
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [],
           "datasource": {
             "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+            "uid": "${ds_infinity}"
           },
           "filters": [],
           "format": "table",
@@ -1282,8 +1406,9 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "${ds_infinity}"
       },
+      "description": "Promedio de la temperatura de todos los concellos monitorizados, en grados Celsius. Ofrece una referencia general del ambiente térmico en el conjunto de Galicia, más allá de un concello concreto.",
       "fieldConfig": {
         "defaults": {
           "max": 40,
@@ -1353,13 +1478,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [],
           "datasource": {
             "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+            "uid": "${ds_infinity}"
           },
           "filters": [],
           "format": "table",
@@ -1382,8 +1507,9 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "${ds_infinity}"
       },
+      "description": "Promedio de la velocidad del viento de todos los concellos monitorizados, en kilómetros por hora. Resume la situación general del viento en toda la comunidad",
       "fieldConfig": {
         "defaults": {
           "max": 100,
@@ -1452,13 +1578,13 @@
         "sparkline": false,
         "textMode": "auto"
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [],
           "datasource": {
             "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+            "uid": "${ds_infinity}"
           },
           "filters": [],
           "format": "table",
@@ -1481,8 +1607,9 @@
     {
       "datasource": {
         "type": "yesoreyeram-infinity-datasource",
-        "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+        "uid": "${ds_infinity}"
       },
+      "description": "Promedio de la precipitación de todos los concellos monitorizados, en milímetros. Da una idea del nivel general de lluvia en el conjunto de Galicia.",
       "fieldConfig": {
         "defaults": {
           "max": 30,
@@ -1551,13 +1678,13 @@
         "sparkline": false,
         "textMode": "auto"
       },
-      "pluginVersion": "13.0.2",
+      "pluginVersion": "13.3.0-32457798232",
       "targets": [
         {
           "columns": [],
           "datasource": {
             "type": "yesoreyeram-infinity-datasource",
-            "uid": "${DS_YESOREYERAM-INFINITY-DATASOURCE}"
+            "uid": "${ds_infinity}"
           },
           "filters": [],
           "format": "table",
@@ -1758,7 +1885,7 @@
   },
   "timezone": "browser",
   "title": "Santi & Go · Tiempo & Deporte en Galicia",
-  "uid": "br9bzzl",
-  "version": 16,
+  "uid": "santi-go-galicia",
+  "version": 56,
   "weekStart": ""
 }
