@@ -47,7 +47,7 @@ santi-go/
 ├── evaluator.py                   # Lógica "apto / no apto" (pura, testeable)
 ├── generate_dashboard.py          # Genera dashboard.json a partir del catálogo de concellos
 ├── dashboard.json                 # Dashboard BASE (8 paneles) generado por el script
-├── dashboard_export_completo.json # Dashboard COMPLETO (13 paneles) exportado de Grafana
+├── dashboard_export_completo.json # Dashboard COMPLETO (11 paneles) exportado de Grafana
 ├── provisioning/
 │   └── alerting/
 │       ├── contact-point-telegram.yaml
@@ -65,18 +65,18 @@ El repo incluye **dos** definiciones de dashboard, y conviene saber cuál usar:
 | Archivo | Paneles | Cómo se mantiene | Cuándo usarlo |
 |---|---|---|---|
 | `dashboard.json` | **8** (base): cabecera, Concello, ¿Apto?, Recomendación, 3 gauges y Geomap | Se **genera** con `generate_dashboard.py` a partir del catálogo de `config.py` | Punto de partida / regenerar tras cambiar concellos |
-| `dashboard_export_completo.json` | **13** (completo): los 8 anteriores **+ tabla por concello + 3 medias de Galicia + piechart de aptos** | Exportado directamente **desde Grafana** (los paneles extra se añadieron por UI) | **Importar la versión completa** tal cual en Grafana Cloud / OSS |
+| `dashboard_export_completo.json` | **11** (completo): los 8 anteriores **+ tabla por concello + 3 medias de Galicia + gráfico de barras por estado** | Exportado directamente **desde Grafana** (los paneles extra se añadieron por UI) | **Importar la versión completa** tal cual en Grafana Cloud / OSS |
 
 > **Para ver el dashboard tal como está en producción, importa `dashboard_export_completo.json`.**
-> El `dashboard.json` es la base reproducible desde código; los paneles de tabla y medias
-> todavía no están portados a `generate_dashboard.py` (mejora pendiente), por eso existe el
-> export completo como fuente de la versión final.
+> El `dashboard.json` es la base reproducible desde código; los paneles de tabla, medias y
+> gráfico de barras todavía no están portados a `generate_dashboard.py` (mejora pendiente),
+> por eso existe el export completo como fuente de la versión final.
 
 **Decisión clave de diseño:** un único endpoint que centraliza la lógica de negocio.
 
 | Petición | Devuelve | Lo consume |
 |---|---|---|
-| `GET /api/galicia/deporte` | **Todos** los concellos (array) | El **Geomap**, la **tabla**, las **medias**, el **piechart** y la **alerta** |
+| `GET /api/galicia/deporte` | **Todos** los concellos (array) | El **Geomap**, la **tabla**, las **medias**, el **gráfico de barras** y la **alerta** |
 | `GET /api/galicia/deporte?municipio=Vigo` | **Un** concello específico | Los **gauges/stats** filtrados |
 
 El backend consulta a la API de OpenWeatherMap, procesa los datos y aplica la lógica de "apto/no apto" según los umbrales configurados. Cada registro del JSON devuelto es:
@@ -172,7 +172,7 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
    *Connections → Data sources → Add → Infinity.* Déjalo por defecto y **Save & test**.
 3. **Importa el dashboard:**
    *Dashboards → New → Import → Upload JSON file →* selecciona
-   **`dashboard_export_completo.json`** (versión completa con tabla, medias y piechart).
+   **`dashboard_export_completo.json`** (versión completa con tabla, medias y gráfico de barras).
    *(Si solo quieres la versión base reproducible desde código, usa `dashboard.json`.)*
 4. En la pantalla de import te pedirá el datasource: **elige tu Infinity**.
    Si vas a reemplazar un dashboard existente, deja el **UID** en `santi-go-galicia` para
@@ -190,24 +190,59 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
 
 ---
 
-## 4. Geomap: qué campos usar
+## 4. Paneles del dashboard
 
-El panel Geomap ya viene configurado, pero estos son los campos que lo hacen funcionar:
+El dashboard completo tiene **11 paneles**. Cada uno lleva una **descripción integrada**
+(icono ⓘ en la esquina del panel) que explica qué representa y cómo se calcula, y usa el
+**color con intención** para que el estado se entienda de un vistazo.
+
+### 4.1 Detalle del concello seleccionado (`$municipio`)
+
+- **📍 Concello** — nombre del concello activo en el desplegable; sirve de referencia para el resto de paneles de detalle.
+- **🏃 ¿Apto para deporte?** — veredicto binario: **✅ ¡Apto!** (verde) o **❌ No Apto** (rojo).
+- **📋 Recomendación** — el motivo legible, coloreado **según la causa** (ver paleta abajo): no solo dice si es apto, sino *por qué* no lo es.
+- **🌡️ Temperatura / 💨 Viento / 🌧️ Precipitación** — *gauges* con el valor actual del concello. Sus tramos de color (*thresholds*) están alineados con los umbrales de `config.py`, de modo que el indicador entra en zona de alerta justo cuando ese factor deja de ser apto.
+
+### 4.2 Visión de conjunto de Galicia
+
+- **🗺️ Mapa de Galicia** — Geomap sobre OpenStreetMap; cada concello es un punto **verde** (apto) o **rojo** (no apto), con su detalle al pasar el cursor.
+- **Concellos por estado meteorológico para deporte** — gráfico de barras que reparte los concellos por estado de alerta. Cada barra tiene el color de su estado y, al pasar el cursor, su *tooltip* indica **cuántos concellos** hay en esa situación.
+- **Tiempo Meteorológico por Concello** — tabla con temperatura, viento, precipitación y recomendación de los 20 concellos; ordenable y comparable.
+- **Temperatura / Viento / Precipitación Media Galicia** — tres *gauges* con el **promedio regional** de cada variable.
+
+### 4.3 Semántica del color
+
+Los estados de alerta comparten una misma paleta en todo el dashboard (en el panel
+**Recomendación** y en el **gráfico de barras**), de forma que un mismo fenómeno se ve
+siempre del mismo color:
+
+| Estado (`recomendacion`) | Color |
+|---|---|
+| ¡Ideal para deporte! | 🟢 Verde (`#73bf69`) |
+| No recomendado · Lluvia extrema | 🔵 Azul (`#1f60c4`) |
+| No recomendado · Calor extremo | 🔴 Rojo (`#f2495c`) |
+| No recomendado · Frío extremo | 🔷 Cian (`#38bfe0`) |
+| No recomendado · Viento extremo | 🟠 Naranja (`#ff9830`) |
+| Sin datos suficientes | ⚪ Gris (`#8e8e8e`) |
+
+> Dos mecanismos de color según el tipo de dato: los **gauges** (valores numéricos) usan
+> *thresholds* —color según el valor—, mientras que los paneles de estado (Recomendación y
+> gráfico de barras) usan *value mappings* —color según el texto del estado—. Ambos siguen
+> la misma paleta para mantener la coherencia visual.
+
+### 4.4 Geomap: campos que lo hacen funcionar
 
 - **Base layer:** `Open Street Map`
   *(evita el basemap por defecto de CARTO: desde 2025 exige API key y muestra una marca de
   agua "API KEY REQUIRED" sobre el mapa. OpenStreetMap es gratuito y sin key.)*
 - **Layer type:** `Markers`
-- **Location mode:** `Coords`
-  - **Latitude field →** `latitud`
-  - **Longitude field →** `longitud`
-- **Marker color → field `apto`** (umbrales: `0` rojo = no apto, `1` verde = apto)
-- **Marker text → field `ciudad`** (etiqueta de cada punto)
-- **Tooltip:** `Details`
+- **Location mode:** `Coords` → **Latitude field** `latitud`, **Longitude field** `longitud`
+- **Marker color → field `apto`** (`0` rojo = no apto, `1` verde = apto)
+- **Marker text → field `ciudad`** · **Tooltip:** `Details`
 
 > Importante: en el target de Infinity, `latitud` y `longitud` deben declararse como
-> tipo **number** (ya lo están). Si llegan como *string*, el Geomap no los reconoce
-> como coordenadas y no pinta nada.
+> tipo **number**. Si llegan como *string*, el Geomap no los reconoce como coordenadas
+> y no pinta nada.
 
 ---
 
@@ -226,19 +261,23 @@ El sistema está preparado para funcionar en dos entornos: en **Grafana Cloud** 
 Al estar configurado en la nube apuntando a Render, **funciona 24/7 sin depender de un PC encendido**. Todo se configura por la interfaz web de Grafana Cloud:
 
 1. **Crear Contact Point:** *Alerting → Contact points → + Add contact point*. Llámalo `telegram-santi-go`, selecciona *Telegram*, pon tu Token y Chat ID.
-2. **Crear la regla de alerta:** *Alerting → Alert rules → + New alert rule*.
-   - **Query:** Usa tu datasource Infinity. Type `JSON`, Source `URL`, Parser `JQ`, Method `GET`.
-   - **URL:** `https://santi-go.onrender.com/api/galicia/deporte` *(Debe apuntar a tu backend en Render).*
-   - **Expresión (Math):** `$A == 0` (evalúa si el campo `apto` es 0).
-   - **Labels:** Añade una etiqueta personalizada (ej. `alerta = deporte`) y guárdala en un grupo de evaluación de `1m`.
-   - **Message (Summary):** `Estado del deporte en {{ $labels.ciudad }}: {{ $labels.recomendacion }}`
-3. **Agrupación por concello (Notification Policy):** *Alerting → Notification configuration → Notification policies → + New specific policy*.
-   - **Matching labels:** `alerta = deporte` (la etiqueta del paso anterior).
+2. **Crear la regla de alerta** (*Alerting → Alert rules → + New alert rule*), con una cadena de tres pasos:
+   - **Query A** (datos): datasource Infinity, Type `JSON`, Source `URL`, Parser `Backend`, Method `GET`, URL `https://santi-go.onrender.com/api/galicia/deporte`. En *Columns*, declara `ciudad` (string), `provincia` (string), `apto` (number) y `recomendacion` (string). Las columnas de texto se convierten en **etiquetas** de la alerta; `apto` es el valor numérico evaluado.
+   - **Reduce C**: `Last` sobre `A` (colapsa la serie a su último valor por concello).
+   - **Math B** (condición de alerta): `$A == 0` — dispara cuando el concello **no es apto**. Marca esta expresión como *Alert condition*.
+   - **Grupo de evaluación:** `1m`, **Pending period** `0s` (aviso inmediato).
+   - **Summary (annotation):** `Estado del deporte en {{ $labels.ciudad }}: {{ $labels.recomendacion }}`
+3. **Agrupación por concello (Notification Policy):** *Alerting → Notification configuration → Notification policies*.
    - **Contact point:** `telegram-santi-go`.
-   - **Override grouping:** Actívalo, selecciona *Custom* y escribe: `grafana_folder`, `alertname`, y **`ciudad`**. (Añadir `ciudad` es clave para que los mensajes lleguen separados).
+   - **Group by:** `grafana_folder`, `alertname` y **`ciudad`**. (Añadir `ciudad` es **clave** para que llegue un mensaje separado por cada concello en vez de todos agrupados en uno.)
+   - **Timings:** *Group wait* `0s`, *Group interval* `1m`, *Repeat interval* `1h`.
+
+> Nota sobre los intervalos: se validó en pruebas reales que evaluar cada `1m` es estable.
+> Con intervalos muy agresivos (p. ej. `10s`) el motor de alerting puede generar
+> notificaciones incompletas al procesar muchas alertas simultáneas.
 
 ### 5.3 Entorno de Desarrollo: Grafana Local (OSS)
-Si corres Grafana self-hosted en tu PC para hacer pruebas o desarrollo local, la alerta debe apuntar a `http://localhost:5000/...`. 
+Si corres Grafana self-hosted en tu PC para hacer pruebas o desarrollo local, la alerta debe apuntar a `http://localhost:5000/...`.
 
 Tienes los ficheros de aprovisionamiento listos en la carpeta `provisioning/alerting/`. Cópialos a `/etc/grafana/provisioning/alerting/`, exporta el token y reinicia Grafana:
 ```bash
@@ -246,6 +285,11 @@ export TELEGRAM_BOT_TOKEN="123456789:AA..."
 export TELEGRAM_CHAT_ID="-1001234567890"
 ```
 y sustituye `<UID_INFINITY>` en `alert-rule-no-apto.yaml` por el UID de tu datasource Infinity.
+
+> Recomendación: mantén las alertas **solo en Grafana Cloud**. Si las dejas activas a la vez
+> en local y en la nube apuntando al mismo bot, recibirás cada aviso **duplicado**. Las de
+> Cloud ya cubren el 100% de los casos (funcionan sin PC), así que en el entorno local es
+> mejor usar el dashboard para desarrollo pero dejar las alertas desactivadas.
 
 ---
 
@@ -264,9 +308,9 @@ petición HTTP, no tu navegador. Por tanto el backend tiene que ser accesible de
   *(Durante el desarrollo también puede usarse un túnel como ngrok apuntando a tu localhost,
   pero Render es la opción estable y permanente, y no depende de tener el PC encendido.)*
 
-> Aprendido a base de depuración: los paneles añadidos por UI (tabla, medias, piechart)
-> tenían la URL escrita como `http://localhost:5000/...` en vez de `${base_url}/...`. En
-> local funcionaban, pero al llevarlos a Grafana Cloud salían vacíos. La versión de
+> Aprendido a base de depuración: los paneles añadidos por UI (tabla, medias, gráfico de
+> barras) tenían la URL escrita como `http://localhost:5000/...` en vez de `${base_url}/...`.
+> En local funcionaban, pero al llevarlos a Grafana Cloud salían vacíos. La versión de
 > `dashboard_export_completo.json` de este repo ya está corregida.
 
 ### CORS
@@ -305,7 +349,7 @@ Edita `CONCELLOS` en `config.py` y ejecuta `python generate_dashboard.py` para
 regenerar el `dashboard.json` con la nueva lista en la variable `$municipio`.
 
 > Nota: `generate_dashboard.py` regenera únicamente los **8 paneles base**. Los paneles
-> extra (tabla, medias, piechart) se añadieron por la UI de Grafana y viven en
+> extra (tabla, medias, gráfico de barras) se añadieron por la UI de Grafana y viven en
 > `dashboard_export_completo.json`. Si añades concellos y quieres la versión completa
 > actualizada, tras regenerar habría que volver a incorporar esos paneles (mejora pendiente:
 > portarlos al script para tener una única fuente de verdad).
