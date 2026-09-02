@@ -4,6 +4,8 @@ Plataforma regional que conecta la API de **OpenWeatherMap** con **Grafana**
 para responder de un vistazo: *¿es buen momento para hacer deporte al aire libre
 en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 
+[![Dashboard en vivo · Grafana Cloud](https://img.shields.io/badge/Dashboard_en_vivo-Grafana_Cloud-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://proudballoon610.grafana.net/dashboard/snapshot/5v58oe4YHscDqYau6vGtPGKIUChAt8AB)
+
 ![Dashboard de Santi & Go](dashboard_preview.png)
 
 *Vista completa del dashboard en Grafana Cloud: detalle del concello seleccionado, mapa de aptitud de toda Galicia, reparto por estado meteorológico y medias regionales.*
@@ -16,24 +18,15 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 - **Alertas:** Grafana Cloud Alerting → **Telegram** (alerta proactiva por concello no apto)
 - **Keep-alive:** UptimeRobot (evita que el plan gratuito de Render hiberne el backend)
 
-Enlaces del proyecto:
+## Enlaces del proyecto
 
-**📸 Vista pública del dashboard (snapshot, sin login):**
-https://proudballoon610.grafana.net/dashboard/snapshot/5v58oe4YHscDqYau6vGtPGKIUChAt8AB
-*(instantánea fija para ver el aspecto del dashboard sin cuenta; los datos son del momento en que se capturó, no se actualizan)*
-
-**🌐 Dashboard en vivo (Grafana Cloud, con login):**
-https://proudballoon610.grafana.net/d/santi-go-galicia
-*(datos en tiempo real; puede requerir sesión de Grafana según la configuración de acceso)*
-
-**🤖 Bot de Telegram:** https://t.me/deporte_clima_bot
-*(publica las alertas de concellos no aptos para deporte)*
-
-**Backend (Render):** https://santi-go.onrender.com
-*(API REST; sirve los datos meteorológicos en JSON — la raíz muestra info y endpoints)*
-
-**📈 Estado del backend en vivo (UptimeRobot):** https://stats.uptimerobot.com/rhc92PF4VK
-*(página de estado pública con el uptime y el tiempo de respuesta del backend)*
+| Recurso | Enlace | Nota |
+|---|---|---|
+| 📸 Vista pública (snapshot, sin login) | [Ver el dashboard sin cuenta](https://proudballoon610.grafana.net/dashboard/snapshot/5v58oe4YHscDqYau6vGtPGKIUChAt8AB) | Instantánea fija para ver el aspecto del dashboard; los datos son del momento en que se capturó, no se actualizan |
+| 🌐 Dashboard en vivo (con login) | [Abrir en Grafana Cloud](https://proudballoon610.grafana.net/d/santi-go-galicia) | Datos en tiempo real; puede requerir sesión de Grafana según la configuración de acceso |
+| 🤖 Bot de Telegram | [@deporte_clima_bot](https://t.me/deporte_clima_bot) | Publica las alertas de concellos no aptos para deporte |
+| ⚙️ Backend (Render) | [API REST en Render](https://santi-go.onrender.com) | Sirve los datos meteorológicos en JSON; la raíz muestra info y endpoints |
+| 📈 Estado del backend (UptimeRobot) | [Página de estado pública](https://stats.uptimerobot.com/rhc92PF4VK) | Uptime y tiempo de respuesta del backend |
 
 > Nota: el dashboard está alojado en el plan gratuito de Grafana Cloud y el backend en el
 > plan gratuito de Render. Render "duerme" el servicio tras un rato de inactividad, así que
@@ -160,7 +153,7 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
 > siempre rápido, un monitor de [UptimeRobot](https://uptimerobot.com) hace una petición HTTP
 > periódica (cada ~5 min) a `https://santi-go.onrender.com`. Así Render nunca llega al periodo
 > de inactividad que dispara la suspensión, y el dashboard carga al instante desde el móvil.
-> El estado del backend es público: **https://stats.uptimerobot.com/rhc92PF4VK**
+> El estado del backend es público: **[página de estado en UptimeRobot](https://stats.uptimerobot.com/rhc92PF4VK)**.
 > *(Nota: mantener despierto un servicio del plan gratuito consume más horas de cómputo; para
 > un uso personal suele quedar dentro del margen mensual.)*
 
@@ -364,3 +357,11 @@ regenerar el `dashboard.json` con la nueva lista en la variable `$municipio`.
 > `dashboard_export_completo.json`. Si añades concellos y quieres la versión completa
 > actualizada, tras regenerar habría que volver a incorporar esos paneles (mejora pendiente:
 > portarlos al script para tener una única fuente de verdad).
+
+---
+
+## 👤 Autor
+
+**Brais Muiño Otero** — Estudiante de Ciencia e Ingeniería de Datos (UDC), orientado a roles de ML / ciencia aplicada.
+
+🔗 **GitHub:** [github.com/brais-muino-otero](https://github.com/brais-muino-otero)  ·  🌐 **Dashboard en vivo:** [Santi & Go en Grafana Cloud](https://proudballoon610.grafana.net/dashboard/snapshot/5v58oe4YHscDqYau6vGtPGKIUChAt8AB)
