@@ -6,6 +6,8 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 
 ![Dashboard de Santi & Go](dashboard_preview.png)
 
+*Vista completa del dashboard en Grafana Cloud: detalle del concello seleccionado, mapa de aptitud de toda Galicia, reparto por estado meteorológico y medias regionales.*
+
 ✅ **Estado del proyecto: 100% Cloud.** Todo el sistema (backend, visualización y motor de alertas) funciona de forma autónoma en la nube 24/7, sin depender de ejecuciones locales (aunque mantiene soporte para desarrollo local).
 
 - **Backend:** Python + Flask (modular), desplegado en **Render**
