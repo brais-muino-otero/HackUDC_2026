@@ -4,6 +4,8 @@ Plataforma regional que conecta la API de **OpenWeatherMap** con **Grafana**
 para responder de un vistazo: *¿es buen momento para hacer deporte al aire libre
 en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 
+![Dashboard de Santi & Go](dashboard_preview.png)
+
 ✅ **Estado del proyecto: 100% Cloud.** Todo el sistema (backend, visualización y motor de alertas) funciona de forma autónoma en la nube 24/7, sin depender de ejecuciones locales (aunque mantiene soporte para desarrollo local).
 
 - **Backend:** Python + Flask (modular), desplegado en **Render**
