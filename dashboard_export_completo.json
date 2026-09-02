@@ -940,7 +940,7 @@
           }
         }
       ],
-      "title": "🗺️ Mapa de Galicia · verde = apto / rojo = no apto",
+      "title": "🗺️ Mapa de Galicia",
       "transformations": [
         {
           "id": "convertFieldType",
@@ -1182,7 +1182,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Ciudad"
+                "value": "Concello"
               }
             ]
           },
@@ -1259,71 +1259,6 @@
               {
                 "id": "displayName",
                 "value": "Viento"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Ciudad",
-              "scope": "series"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 210
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Recomendación",
-              "scope": "series"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 267
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Precipitación",
-              "scope": "series"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 155
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Viento",
-              "scope": "series"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 161
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Temperatura",
-              "scope": "series"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 132
               }
             ]
           }

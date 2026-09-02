@@ -174,7 +174,9 @@ accesible 24/7 sin necesidad de tener el PC encendido. A grandes rasgos:
    *Dashboards → New → Import → Upload JSON file →* selecciona
    **`dashboard_export_completo.json`** (versión completa con tabla, medias y gráfico de barras).
    *(Si solo quieres la versión base reproducible desde código, usa `dashboard.json`.)*
-4. En la pantalla de import te pedirá el datasource: **elige tu Infinity**.
+4. En la pantalla de import te pedirá el datasource: **elige tu Infinity**. En Grafana
+   Cloud suele llamarse **`grafanacloud-infinity`** (no confundir con
+   `yesoreyeram-infinity-datasource`, que es el tipo interno del plugin, no tu instancia).
    Si vas a reemplazar un dashboard existente, deja el **UID** en `santi-go-galicia` para
    que lo sobrescriba en vez de crear un duplicado.
 5. Arriba verás dos controles: **Concello** (`$municipio`) y **URL del backend** (`$base_url`).
@@ -206,9 +208,9 @@ El dashboard completo tiene **13 paneles**. Cada uno lleva una **descripción in
 ### 4.2 Visión de conjunto de Galicia
 
 - **🗺️ Mapa de Galicia** — Geomap sobre OpenStreetMap; cada concello es un punto **verde** (apto) o **rojo** (no apto), con su detalle al pasar el cursor.
-- **Concellos por estado meteorológico para deporte** — gráfico de barras que reparte los concellos por estado de alerta. Cada barra tiene el color de su estado y, al pasar el cursor, su *tooltip* indica **cuántos concellos** hay en esa situación.
-- **Tiempo Meteorológico por Concello** — tabla con temperatura, viento, precipitación y recomendación de los 20 concellos; ordenable y comparable.
-- **Temperatura / Viento / Precipitación Media Galicia** — tres *gauges* con el **promedio regional** de cada variable.
+- **📊 Concellos por estado meteorológico** — gráfico de barras que reparte los concellos por estado de alerta. Cada barra tiene el color de su estado y, al pasar el cursor, su *tooltip* indica **cuántos concellos** hay en esa situación.
+- **📋 Tiempo meteorológico por concello** — tabla con temperatura, viento, precipitación y recomendación de los 20 concellos; ordenable y comparable.
+- **🌡️ Temperatura / 💨 Viento / 🌧️ Precipitación media Galicia** — tres *gauges* con el **promedio regional** de cada variable.
 
 ### 4.3 Semántica del color
 
@@ -229,6 +231,11 @@ siempre del mismo color:
 > *thresholds* —color según el valor—, mientras que los paneles de estado (Recomendación y
 > gráfico de barras) usan *value mappings* —color según el texto del estado—. Ambos siguen
 > la misma paleta para mantener la coherencia visual.
+
+> **Escala de los gauges de precipitación.** Ambos gauges de lluvia (individual y media)
+> usan la misma escala 0–15 mm con cortes en **0 (verde) · 2 (azul) · 8 (azul oscuro) ·
+> 15 (morado)**. El corte en **2 mm** coincide con el umbral de "lluvia extrema" de
+> `config.py`, de modo que el color se intensifica justo cuando la lluvia deja de ser apta.
 
 ### 4.4 Geomap: campos que lo hacen funcionar
 
