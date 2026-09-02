@@ -360,8 +360,9 @@ regenerar el `dashboard.json` con la nueva lista en la variable `$municipio`.
 
 ---
 
-## 👤 Autor
+## 👥 Créditos y autoría
 
-**Brais Muiño Otero** — Estudiante de Ciencia e Ingeniería de Datos (UDC), orientado a roles de ML / ciencia aplicada.
+Proyecto creado en **HackUDC 2026** por **Brais Muiño Otero** y **Juan Casas Del Río**.
+Ampliado y mantenido posteriormente por **Brais Muiño Otero** — Estudiante de Ciencia e Ingeniería de Datos (UDC), orientado a roles de ML / ciencia aplicada.
 
 🔗 **GitHub:** [github.com/brais-muino-otero](https://github.com/brais-muino-otero)  ·  🌐 **Dashboard en vivo:** [Santi & Go en Grafana Cloud](https://proudballoon610.grafana.net/dashboard/snapshot/5v58oe4YHscDqYau6vGtPGKIUChAt8AB)
