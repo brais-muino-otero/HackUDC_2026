@@ -23,7 +23,7 @@ en cualquier concello de Galicia?* — con **avisos automáticos por Telegram**.
 | Recurso | Enlace | Nota |
 |---|---|---|
 | 📸 Vista pública (snapshot, sin login) | [Ver el dashboard sin cuenta](https://proudballoon610.grafana.net/dashboard/snapshot/5v58oe4YHscDqYau6vGtPGKIUChAt8AB) | Instantánea fija para ver el aspecto del dashboard; los datos son del momento en que se capturó, no se actualizan |
-| 🌐 Dashboard en vivo (con login) | [Abrir en Grafana Cloud](https://proudballoon610.grafana.net/d/santi-go-galicia](http://localhost:3000/d/santi-go-galicia/santi-and-go-c2b7-tiempo-and-deporte-en-galicia?orgId=1&from=now-1h&to=now&timezone=browser&var-ds_infinity=dfx2ojeckil8gd&var-base_url=https:%2F%2Fsanti-go.onrender.com&var-municipio=A%20Coru%C3%B1a&refresh=1m)) | Datos en tiempo real; puede requerir sesión de Grafana según la configuración de acceso |
+| 🌐 Dashboard en vivo (con login) | [Abrir en Grafana Cloud](localhost:3000/d/santi-go-galicia/santi-and-go-c2b7-tiempo-and-deporte-en-galicia?orgId=1&from=now-1h&to=now&timezone=browser&var-ds_infinity=dfx2ojeckil8gd&var-base_url=https:%2F%2Fsanti-go.onrender.com&var-municipio=A Coruña&refresh=1m)) | Datos en tiempo real; puede requerir sesión de Grafana según la configuración de acceso |
 | 🤖 Bot de Telegram | [@deporte_clima_bot](https://t.me/deporte_clima_bot) | Publica las alertas de concellos no aptos para deporte |
 | ⚙️ Backend (Render) | [API REST en Render](https://santi-go.onrender.com) | Sirve los datos meteorológicos en JSON; la raíz muestra info y endpoints |
 | 📈 Estado del backend (UptimeRobot) | [Página de estado pública](https://stats.uptimerobot.com/rhc92PF4VK) | Uptime y tiempo de respuesta del backend |
